@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Кликер · Android Style</title>
+    <link rel="icon" href="https://wassss337.github.io/data/images/logo.png">
+    <style>
+        /* === Android Material Design + тёмная тема === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+        }
+        body {
+            min-height: 100vh;
+            background: #0f0f12;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 8px;
+        }
+        .game-container {
+            max-width: 420px;
+            width: 100%;
+            background: #1c1c22;
+            border-radius: 36px;
+            padding: 20px 16px 28px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.7), inset 0 1px 1px rgba(255,255,255,0.06);
+            backdrop-filter: blur(2px);
+            transition: all 0.2s;
+            border: 1px solid #2e2e38;
+        }
+        /* шапка */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #2b2b33;
+        }
+        .score-box {
+            background: #2a2a32;
+            padding: 8px 18px;
+            border-radius: 40px;
+            box-shadow: inset 0 2px 6px #0a0a0c;
+        }
+        .score-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #8e8e9a;
+            font-weight: 600;
+        }
+        .score-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #f0f0f5;
+            text-shadow: 0 2px 6px #3a3a4a;
+            letter-spacing: 0.5px;
+        }
+        .prestige-btn {
+            background: #3d2c4a;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 30px;
+            color: #d4b0e6;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 4px 0 #1f1428;
+            transition: 0.08s linear;
+            cursor: pointer;
+            border: 1px solid #5d3f70;
+        }
+        .prestige-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #1f1428;
+        }
+        /* клик-аватар */
+        .click-area {
+            display: flex;
+            justify-content: center;
+            margin: 24px 0 20px;
+        }
+        .click-circle {
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle at 30% 30%, #3f3f52, #1f1f28);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 12px 0 #0b0b0e, 0 20px 30px rgba(0,0,0,0.6);
+            border: 2px solid #49495a;
+            transition: 0.06s linear;
+            cursor: pointer;
+            color: white;
+            font-weight: 700;
+            font-size: 22px;
+            letter-spacing: 1px;
+            position: relative;
+        }
+        .click-circle:active {
+            transform: scale(0.94);
+            box-shadow: 0 6px 0 #0b0b0e, 0 16px 24px rgba(0,0,0,0.7);
+        }
+        .click-icon {
+            font-size: 56px;
+            line-height: 1;
+            filter: drop-shadow(0 6px 6px #00000066);
+        }
+        .click-power {
+            background: #2f2f3b;
+            padding: 4px 18px;
+            border-radius: 40px;
+            font-size: 15px;
+            margin-top: 6px;
+            border: 1px solid #4c4c5e;
+            color: #cbcbdb;
+        }
+        /* статы и механики */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            background: #16161d;
+            padding: 12px 10px;
+            border-radius: 28px;
+            margin: 12px 0 16px;
+            border: 1px solid #2d2d38;
+        }
+        .stat-item {
+            text-align: center;
+            background: #22222b;
+            padding: 6px 0;
+            border-radius: 30px;
+        }
+        .stat-label {
+            font-size: 10px;
+            color: #8f8f9e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .stat-number {
+            font-size: 18px;
+            font-weight: 700;
+            color: #ececf5;
+        }
+        /* магазин */
+        .shop-title {
+            color: #b8b8cc;
+            font-weight: 600;
+            letter-spacing: 0.8px;
+            padding: 8px 0 6px 6px;
+            font-size: 15px;
+            border-bottom: 1px solid #2d2d38;
+            margin-bottom: 12px;
+        }
+        .shop-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #22222b;
+            padding: 12px 14px;
+            border-radius: 40px;
+            margin-bottom: 10px;
+            border: 1px solid #34343f;
+            transition: 0.1s;
+        }
+        .shop-item:active {
+            background: #2d2d3a;
+            transform: scale(0.98);
+        }
+        .item-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .item-name {
+            font-weight: 600;
+            color: #e8e8f0;
+            font-size: 16px;
+        }
+        .item-desc {
+            font-size: 12px;
+            color: #a0a0b3;
+        }
+        .item-price {
+            background: #3b3b4a;
+            padding: 6px 18px;
+            border-radius: 40px;
+            color: #f2d9b0;
+            font-weight: 700;
+            font-size: 15px;
+            border: 1px solid #56566b;
+            box-shadow: inset 0 1px 3px #0f0f14;
+            white-space: nowrap;
+        }
+        .item-price:active {
+            background: #4a4a5e;
+        }
+        .disabled {
+            opacity: 0.5;
+            pointer-events: none;
+            filter: grayscale(0.5);
+        }
+        /* достижения */
+        .achievement-badge {
+            background: #1e1e28;
+            border-radius: 40px;
+            padding: 12px 16px;
+            margin: 14px 0 6px;
+            border-left: 5px solid #b78bcf;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #3e3e50;
+            border-left-width: 6px;
+        }
+        .ach-text {
+            color: #d4d4e6;
+            font-weight: 500;
+        }
+        .ach-status {
+            font-size: 18px;
+        }
+        .footer-note {
+            text-align: center;
+            color: #5c5c70;
+            font-size: 11px;
+            margin-top: 16px;
+            letter-spacing: 0.3px;
+        }
+        /* анимация всплывающего "+" */
+        .float-text {
+            position: fixed;
+            pointer-events: none;
+            font-weight: 800;
+            color: #d4b0ff;
+            text-shadow: 0 0 12px #a06cd4;
+            font-size: 26px;
+            z-index: 999;
+            animation: floatUp 0.7s ease-out forwards;
+        }
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-120px) scale(1.3); }
+        }
+        /* адаптив */
+        @media (max-width: 400px) {
+            .click-circle { width: 150px; height: 150px; }
+            .click-icon { font-size: 44px; }
+        }
+    </style>
+</head>
+<body>
+<div class="game-container" id="app">
+
+    <!-- шапка -->
+    <div class="header">
+        <div class="score-box">
+            <div class="score-label">💎 Очки</div>
+            <div class="score-value" id="scoreDisplay">0</div>
+        </div>
+        <button class="prestige-btn" id="prestigeBtn">✨ Престиж</button>
+    </div>
+
+    <!-- кликер -->
+    <div class="click-area">
+        <div class="click-circle" id="clickerCircle">
+            <span class="click-icon">⚡</span>
+            <span class="click-power" id="clickPowerDisplay">+1</span>
+        </div>
+    </div>
+
+    <!-- статы -->
+    <div class="stats-grid">
+        <div class="stat-item"><div class="stat-label">Кликов</div><div class="stat-number" id="totalClicks">0</div></div>
+        <div class="stat-item"><div class="stat-label">Авто/сек</div><div class="stat-number" id="autoPerSec">0</div></div>
+        <div class="stat-item"><div class="stat-label">Уровень</div><div class="stat-number" id="prestigeLevel">0</div></div>
+    </div>
+
+    <!-- магазин -->
+    <div class="shop-title">🏪 Улучшения</div>
+    <div id="shopContainer">
+        <!-- динамически из js -->
+    </div>
+
+    <!-- достижения -->
+    <div id="achievementContainer" class="achievement-badge" style="border-left-color: #6e6e88;">
+        <span class="ach-text">🏆 Достижения</span>
+        <span class="ach-status" id="achieveStatus">0 / 3</span>
+    </div>
+
+    <div class="footer-note">нажми на ⚡ — прокачайся</div>
+</div>
+
+<script>
+    (function(){
+        // ---------- состояние ----------
+        const state = {
+            score: 0,
+            totalClicks: 0,
+            clickPower: 1,
+            autoPerSecond: 0,
+            prestigeLevel: 0,
+            prestigeMultiplier: 1,
+
+            // улучшения
+            upgradeClickLevel: 0,     // +1 за уровень
+            upgradeAutoLevel: 0,
+            upgradeCritLevel: 0,      // шанс крита
+
+            // достижения (флаги)
+            achFirstBlood: false,
+            achAuto10: false,
+            achPrestige1: false,
+        };
+
+        // цены (базовые)
+        const PRICES = {
+            click: 10,
+            auto: 30,
+            crit: 80,
+        };
+
+        // ссылки на DOM
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const totalClicksDisplay = document.getElementById('totalClicks');
+        const autoPerSecDisplay = document.getElementById('autoPerSec');
+        const prestigeLevelDisplay = document.getElementById('prestigeLevel');
+        const clickPowerDisplay = document.getElementById('clickPowerDisplay');
+        const shopContainer = document.getElementById('shopContainer');
+        const achieveStatus = document.getElementById('achieveStatus');
+
+        // ---------- helper: обновить UI ----------
+        function updateUI() {
+            scoreDisplay.textContent = Math.floor(state.score);
+            totalClicksDisplay.textContent = state.totalClicks;
+            autoPerSecDisplay.textContent = state.autoPerSecond;
+            prestigeLevelDisplay.textContent = state.prestigeLevel;
+            clickPowerDisplay.textContent = `+${getTotalClickPower()}`;
+
+            // достижения
+            let count = 0;
+            if (state.achFirstBlood) count++;
+            if (state.achAuto10) count++;
+            if (state.achPrestige1) count++;
+            achieveStatus.textContent = `${count} / 3`;
+
+            renderShop();
+            checkAchievements();
+        }
+
+        // ---------- вычисления силы клика ----------
+        function getTotalClickPower() {
+            let base = state.clickPower + state.upgradeClickLevel * 1; // каждое улучшение +1
+            // крит: если есть улучшение крита, шанс 20% * уровень (макс 80%)
+            const critLevel = state.upgradeCritLevel;
+            if (critLevel > 0 && Math.random() < Math.min(0.8, 0.2 * critLevel)) {
+                return Math.floor(base * 2.5); // крит х2.5
+            }
+            return base;
+        }
+
+        // ---------- клик ----------
+        function handleClick(e) {
+            const power = getTotalClickPower();
+            const gained = Math.floor(power * state.prestigeMultiplier);
+            state.score += gained;
+            state.totalClicks += 1;
+
+            // визуальный фидбек
+            const circle = document.getElementById('clickerCircle');
+            circle.style.transform = 'scale(0.92)';
+            setTimeout(() => circle.style.transform = '', 90);
+
+            // всплывающий текст
+            const rect = circle.getBoundingClientRect();
+            const x = rect.left + rect.width/2 + (Math.random()*40 - 20);
+            const y = rect.top + 10;
+            const float = document.createElement('div');
+            float.className = 'float-text';
+            float.textContent = `+${gained}`;
+            float.style.left = x + 'px';
+            float.style.top = y + 'px';
+            document.body.appendChild(float);
+            setTimeout(() => float.remove(), 700);
+
+            // достижение "первый клик"
+            if (!state.achFirstBlood && state.totalClicks >= 1) {
+                state.achFirstBlood = true;
+            }
+
+            updateUI();
+        }
+
+        // ---------- авто-клик (тик) ----------
+        function autoTick() {
+            if (state.autoPerSecond <= 0) return;
+            const gain = Math.floor(state.autoPerSecond * state.prestigeMultiplier);
+            state.score += gain;
+            // не увеличиваем totalClicks от авто
+            updateUI();
+        }
+
+        // ---------- престиж ----------
+        function doPrestige() {
+            if (state.score < 1000) {
+                // вибрация через alert (android-friendly)
+                alert('Нужно 1000 очков для престижа!');
+                return;
+            }
+            // сброс, добавление уровня
+            state.prestigeLevel += 1;
+            state.prestigeMultiplier = 1 + state.prestigeLevel * 0.5; // +50% за уровень
+
+            // сброс улучшений (но сохраняем клики?)
+            state.upgradeClickLevel = 0;
+            state.upgradeAutoLevel = 0;
+            state.upgradeCritLevel = 0;
+            state.clickPower = 1;
+            state.autoPerSecond = 0;
+            state.score = 0;
+
+            // достижение за престиж
+            if (!state.achPrestige1 && state.prestigeLevel >= 1) {
+                state.achPrestige1 = true;
+            }
+
+            updateUI();
+        }
+
+        // ---------- покупка улучшений ----------
+        function buyUpgrade(type) {
+            let cost = 0;
+            let levelField = null;
+            let effect = null;
+
+            if (type === 'click') {
+                cost = Math.floor(PRICES.click * (1 + state.upgradeClickLevel * 0.7));
+                levelField = 'upgradeClickLevel';
+                effect = () => { state.clickPower += 1; };
+            } else if (type === 'auto') {
+                cost = Math.floor(PRICES.auto * (1 + state.upgradeAutoLevel * 0.9));
+                levelField = 'upgradeAutoLevel';
+                effect = () => { state.autoPerSecond += 1; };
+            } else if (type === 'crit') {
+                cost = Math.floor(PRICES.crit * (1 + state.upgradeCritLevel * 1.2));
+                levelField = 'upgradeCritLevel';
+                effect = () => { /* увеличение шанса через getTotalClickPower */ };
+            } else return;
+
+            if (state.score < cost) {
+                // лёгкий фидбек
+                return;
+            }
+
+            state.score -= cost;
+            state[levelField] = (state[levelField] || 0) + 1;
+            if (effect) effect();
+
+            // достижение 10 авто
+            if (!state.achAuto10 && state.autoPerSecond >= 10) {
+                state.achAuto10 = true;
+            }
+
+            updateUI();
+        }
+
+        // ---------- рендер магазина ----------
+        function renderShop() {
+            const clickCost = Math.floor(PRICES.click * (1 + state.upgradeClickLevel * 0.7));
+            const autoCost = Math.floor(PRICES.auto * (1 + state.upgradeAutoLevel * 0.9));
+            const critCost = Math.floor(PRICES.crit * (1 + state.upgradeCritLevel * 1.2));
+
+            const canBuyClick = state.score >= clickCost;
+            const canBuyAuto = state.score >= autoCost;
+            const canBuyCrit = state.score >= critCost;
+
+            shopContainer.innerHTML = `
+                <div class="shop-item ${!canBuyClick ? 'disabled' : ''}" onclick="window.buyUpgrade('click')">
+                    <div class="item-info"><span class="item-name">👆 Сила клика</span><span class="item-desc">+1 к клику (ур.${state.upgradeClickLevel})</span></div>
+                    <span class="item-price">${clickCost} 💎</span>
+                </div>
+                <div class="shop-item ${!canBuyAuto ? 'disabled' : ''}" onclick="window.buyUpgrade('auto')">
+                    <div class="item-info"><span class="item-name">⚙️ Автокликер</span><span class="item-desc">+1/сек (ур.${state.upgradeAutoLevel})</span></div>
+                    <span class="item-price">${autoCost} 💎</span>
+                </div>
+                <div class="shop-item ${!canBuyCrit ? 'disabled' : ''}" onclick="window.buyUpgrade('crit')">
+                    <div class="item-info"><span class="item-name">💥 Крит-шанс</span><span class="item-desc">+20% шанс ×2.5 (ур.${state.upgradeCritLevel})</span></div>
+                    <span class="item-price">${critCost} 💎</span>
+                </div>
+            `;
+        }
+
+        // ---------- достижения (чек + обновление) ----------
+        function checkAchievements() {
+            // просто обновляем статус
+            let count = 0;
+            if (state.achFirstBlood) count++;
+            if (state.achAuto10) count++;
+            if (state.achPrestige1) count++;
+            achieveStatus.textContent = `${count} / 3`;
+            // дополнительно можно менять цвет рамки
+            const badge = document.getElementById('achievementContainer');
+            if (count === 3) {
+                badge.style.borderLeftColor = '#f7c948';
+            } else {
+                badge.style.borderLeftColor = '#6e6e88';
+            }
+        }
+
+        // ---------- инициализация + интервалы ----------
+        window.buyUpgrade = buyUpgrade;
+        document.getElementById('clickerCircle').addEventListener('click', handleClick);
+        document.getElementById('prestigeBtn').addEventListener('click', doPrestige);
+
+        // тик авто-кликера каждую секунду
+        setInterval(autoTick, 1000);
+
+        // начальный рендер
+        updateUI();
+
+        // дополнительно: если престиж даёт множитель
+        // сохраняем в local storage? (не требуется, но можно добавить)
+        // легкая адаптация под android: убираем дефолтные стили кнопок
+    })();
+</script>
+</body>
+</html>
