@@ -1,0 +1,2334 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Clash Royale Mini v10 — Pixel Edition</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
+  body {
+    background: #0a0514;
+    font-family: 'Courier New', 'Consolas', monospace;
+    color: #fff; user-select: none;
+    display: flex; justify-content: center; align-items: center;
+    image-rendering: pixelated;
+  }
+  #app {
+    width: min(1280px, 100vw);
+    height: min(800px, 100vh);
+    background: #1a1030;
+    position: relative;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    border: 4px solid #3a2a5a;
+    box-shadow: inset 0 0 100px rgba(0,0,0,0.6);
+  }
+  @media (max-width: 900px) { #app { width: 100vw; height: 100vh; border: none; } }
+
+  /* MINECRAFT BUTTONS */
+  .mc-btn {
+    position: relative;
+    background: linear-gradient(180deg, #8a8a8a 0%, #6a6a6a 40%, #4a4a4a 100%);
+    border: 3px solid #2a2a2a;
+    color: #fff;
+    font-family: inherit; font-size: 13px; font-weight: bold;
+    padding: 12px 16px; cursor: pointer;
+    text-shadow: 2px 2px 0 #000;
+    box-shadow:
+      inset -2px -3px 0 #2a2a2a,
+      inset 2px 2px 0 #b0b0b0,
+      0 3px 0 #1a1a1a;
+    transition: all 0.05s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    text-align: center; line-height: 1.1;
+    letter-spacing: 0.5px;
+  }
+  .mc-btn:hover {
+    background: linear-gradient(180deg, #a0a0a0 0%, #808080 40%, #606060 100%);
+    box-shadow:
+      inset -2px -3px 0 #2a2a2a,
+      inset 2px 2px 0 #c8c8c8,
+      0 3px 0 #1a1a1a,
+      0 0 15px rgba(255,255,255,0.3);
+  }
+  .mc-btn:active {
+    transform: translateY(3px);
+    box-shadow: inset -2px -3px 0 #2a2a2a, inset 2px 2px 0 #b0b0b0, 0 0 0 #1a1a1a;
+  }
+  .mc-btn:disabled {
+    background: linear-gradient(180deg, #4a4a4a 0%, #3a3a3a 100%);
+    color: #666; cursor: not-allowed;
+    text-shadow: 1px 1px 0 #000;
+  }
+  .mc-btn:disabled:hover { transform: none; }
+
+  .mc-btn.green {
+    background: linear-gradient(180deg, #6ac06a 0%, #4a9a4a 40%, #2a7a2a 100%);
+    box-shadow: inset -2px -3px 0 #1a5a1a, inset 2px 2px 0 #8ae08a, 0 3px 0 #0a4a0a;
+  }
+  .mc-btn.green:hover {
+    background: linear-gradient(180deg, #8ae08a 0%, #6ac06a 40%, #4a9a4a 100%);
+    box-shadow: inset -2px -3px 0 #1a5a1a, inset 2px 2px 0 #aaffaa, 0 3px 0 #0a4a0a, 0 0 15px rgba(106,192,106,0.5);
+  }
+  .mc-btn.green:active {
+    transform: translateY(3px);
+    box-shadow: inset -2px -3px 0 #1a5a1a, inset 2px 2px 0 #8ae08a, 0 0 0;
+  }
+
+  .mc-btn.gold {
+    background: linear-gradient(180deg, #ffcc00 0%, #cc9900 40%, #8a6600 100%);
+    color: #2a1a00; text-shadow: 1px 1px 0 #ffe066;
+    box-shadow: inset -2px -3px 0 #6a4a00, inset 2px 2px 0 #ffe066, 0 3px 0 #4a2a00;
+  }
+  .mc-btn.gold:hover {
+    background: linear-gradient(180deg, #ffe066 0%, #ffcc00 40%, #cc9900 100%);
+    box-shadow: inset -2px -3px 0 #6a4a00, inset 2px 2px 0 #ffff99, 0 3px 0 #4a2a00, 0 0 15px rgba(255,204,0,0.6);
+  }
+  .mc-btn.gold:active {
+    transform: translateY(3px);
+    box-shadow: inset -2px -3px 0 #6a4a00, inset 2px 2px 0 #ffe066, 0 0 0;
+  }
+
+  .mc-btn.red {
+    background: linear-gradient(180deg, #e05a5a 0%, #a03a3a 40%, #6a1a1a 100%);
+    box-shadow: inset -2px -3px 0 #4a0a0a, inset 2px 2px 0 #ff8a8a, 0 3px 0 #2a0a0a;
+  }
+  .mc-btn.red:hover {
+    background: linear-gradient(180deg, #ff8a8a 0%, #e05a5a 40%, #a03a3a 100%);
+  }
+  .mc-btn.red:active {
+    transform: translateY(3px);
+    box-shadow: inset -2px -3px 0 #4a0a0a, inset 2px 2px 0 #ff8a8a, 0 0 0;
+  }
+
+  .mc-btn.purple {
+    background: linear-gradient(180deg, #9a5aff 0%, #6a3aff 40%, #4a1aaa 100%);
+    box-shadow: inset -2px -3px 0 #2a0a6a, inset 2px 2px 0 #c8aaff, 0 3px 0 #1a0a4a;
+  }
+  .mc-btn.purple:hover {
+    background: linear-gradient(180deg, #b88aff 0%, #9a5aff 40%, #6a3aff 100%);
+  }
+  .mc-btn.purple:active {
+    transform: translateY(3px);
+    box-shadow: inset -2px -3px 0 #2a0a6a, inset 2px 2px 0 #c8aaff, 0 0 0;
+  }
+
+  .mc-btn .mb-icon { font-size: 18px; filter: drop-shadow(1px 1px 0 #000); }
+
+  /* TOPBAR */
+  #topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 12px;
+    background: repeating-linear-gradient(90deg, #4a3a6a, #4a3a6a 4px, #3a2a5a 4px, #3a2a5a 8px), #4a3a6a;
+    border-bottom: 4px solid #ffcc00;
+    box-shadow: 0 4px 0 #2a1a4a, 0 6px 12px rgba(0,0,0,0.6);
+    height: 56px; flex-shrink: 0; z-index: 10;
+  }
+  #playerInfo { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  #avatar {
+    width: 42px; height: 42px;
+    background: linear-gradient(135deg, #9a5aff 0%, #4a1a9a 100%);
+    border: 3px solid #ffcc00;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 0 12px rgba(255,204,0,0.5);
+  }
+  #playerName { font-weight: bold; font-size: 13px; text-shadow: 2px 2px 0 #000; }
+  #rankLabel { font-size: 10px; color: #ffcc00; text-shadow: 1px 1px 0 #000; }
+  #currencies { display: flex; gap: 6px; flex-wrap: wrap; }
+  .currency {
+    display: flex; align-items: center; gap: 4px;
+    background: #2a1a4a; padding: 4px 10px;
+    border: 2px solid #4a3a6a;
+    box-shadow: inset -1px -1px 0 #1a0a2a, inset 1px 1px 0 #6a5a8a;
+    font-weight: bold; font-size: 12px; text-shadow: 1px 1px 0 #000;
+  }
+  .currency.gold { color: #ffcc00; }
+  .currency.gem { color: #4ade80; }
+  .currency.star { color: #ff4aff; }
+
+  .screen { display: none; flex: 1; overflow-y: auto; padding: 12px; }
+  .screen.active { display: block; }
+  .screen::-webkit-scrollbar { width: 8px; }
+  .screen::-webkit-scrollbar-thumb { background: #4a3a6a; border: 1px solid #2a1a4a; }
+
+  #menuScreen.active {
+    display: flex; flex-direction: column;
+    padding: 16px 20px; overflow-y: auto;
+    background: repeating-linear-gradient(0deg, #1a1030, #1a1030 16px, #1e1440 16px, #1e1440 17px);
+  }
+  .menu-header { text-align: center; margin-bottom: 14px; }
+  .logo {
+    font-size: clamp(28px, 7vw, 52px); font-weight: 900;
+    color: #ffcc00;
+    text-shadow: 3px 3px 0 #8a3a00, 6px 6px 0 #5a1a00, 7px 7px 0 #2a0a00;
+    letter-spacing: 3px;
+    font-family: 'Arial Black', sans-serif;
+  }
+  .subtitle { font-size: 11px; color: #aa88dd; letter-spacing: 3px; margin-top: 6px; text-shadow: 1px 1px 0 #000; }
+
+  .menu-tabs {
+    display: flex; gap: 4px;
+    max-width: 640px; margin: 0 auto 14px;
+    padding: 4px; background: #1a0a2a;
+    border: 3px solid #2a1a4a;
+    box-shadow: inset 2px 2px 0 #0a0018;
+    overflow-x: auto;
+  }
+  .mc-tab {
+    flex: 1; min-width: 70px; padding: 10px 4px;
+    background: #2a1a4a; border: 2px solid #1a0a2a;
+    box-shadow: inset -1px -2px 0 #0a0018, inset 1px 1px 0 #6a5a8a;
+    color: #888;
+    font-family: inherit; font-size: 11px; font-weight: bold;
+    cursor: pointer; white-space: nowrap;
+    text-shadow: 1px 1px 0 #000;
+    transition: all 0.05s;
+  }
+  .mc-tab:hover { color: #fff; }
+  .mc-tab.active {
+    background: linear-gradient(180deg, #9a5aff 0%, #6a3aff 100%);
+    border-color: #ffcc00; color: #fff;
+    box-shadow: inset -1px -2px 0 #2a0a6a, inset 1px 1px 0 #c8aaff;
+  }
+  .tab-content { max-width: 640px; margin: 0 auto; width: 100%; }
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+  .tab-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+  .tab-grid.cols-1 { grid-template-columns: 1fr; }
+
+  .back-btn {
+    background: #2a1a4a; border: 3px solid #1a0a2a;
+    box-shadow: inset -1px -2px 0 #0a0018, inset 1px 1px 0 #6a5a8a;
+    color: #fff; padding: 8px 16px;
+    font-family: inherit; font-size: 12px; font-weight: bold;
+    cursor: pointer; margin-bottom: 12px;
+    text-shadow: 1px 1px 0 #000;
+  }
+  .back-btn:hover { background: #3a2a5a; }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(82px, 1fr));
+    gap: 6px;
+  }
+  .card-item {
+    background: #2a1a4a; border: 3px solid #4a4a7a;
+    box-shadow: inset -2px -2px 0 #1a0a2a, inset 2px 2px 0 #5a4a8a, 0 2px 0 #0a0018;
+    padding: 6px 4px; text-align: center;
+    cursor: pointer; position: relative;
+    transition: all 0.1s;
+  }
+  .card-item:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.6); }
+  .card-item.locked { opacity: 0.4; filter: grayscale(1); }
+  .card-item .card-icon { font-size: 24px; margin-bottom: 2px; }
+  .card-item .card-name { font-size: 9px; font-weight: bold; line-height: 1.1; text-shadow: 1px 1px 0 #000; }
+  .card-item .card-cost {
+    position: absolute; top: -3px; left: -3px;
+    background: #6a3aff; border: 2px solid #ffcc00;
+    box-shadow: 0 2px 0 #2a0a6a;
+    width: 20px; height: 20px; line-height: 16px;
+    font-size: 11px; font-weight: bold; text-shadow: 1px 1px 0 #000;
+  }
+  .card-item .card-level { font-size: 8px; color: #ffcc00; margin-top: 2px; text-shadow: 1px 1px 0 #000; }
+  .card-item .upgrade-btn {
+    width: 100%; margin-top: 3px;
+    background: #4ade80; border: 2px solid #1a5a2a; color: #000;
+    padding: 2px; font-size: 8px; font-weight: bold;
+    font-family: inherit; cursor: pointer;
+    box-shadow: 0 2px 0 #1a5a2a;
+  }
+  .card-item .upgrade-btn:disabled { background: #444; color: #888; box-shadow: none; }
+  .rarity-common { border-color: #8a8a8a; }
+  .rarity-rare { border-color: #ff9a00; }
+  .rarity-epic { border-color: #c23aff; }
+  .rarity-legendary { border-color: #ffcc00; }
+  .rarity-champion { border-color: #ff4aff; }
+  .rarity-common .card-cost { background: #666; border-color: #666; }
+  .rarity-rare .card-cost { background: #ff9a00; color: #000; border-color: #ff9a00; }
+  .rarity-epic .card-cost { background: #c23aff; border-color: #c23aff; }
+  .rarity-legendary .card-cost { background: #ffcc00; color: #000; border-color: #ffcc00; }
+  .rarity-champion .card-cost { background: #ff4aff; border-color: #ff4aff; }
+
+  .search-bar { display: flex; gap: 6px; margin-bottom: 10px; max-width: 500px; margin-left: auto; margin-right: auto; }
+  .search-bar input {
+    flex: 1; padding: 8px 12px;
+    background: #1a1030; border: 3px solid #4a3a6a;
+    box-shadow: inset 2px 2px 0 #0a0018;
+    color: #fff; font-family: inherit; font-size: 13px;
+  }
+  .filter-btns { display: flex; gap: 4px; margin-bottom: 10px; justify-content: center; flex-wrap: wrap; }
+  .filter-btn {
+    padding: 6px 12px;
+    background: #2a1a4a; border: 2px solid #4a3a6a;
+    box-shadow: inset -1px -1px 0 #1a0a2a, inset 1px 1px 0 #5a4a8a;
+    color: #aaa; font-family: inherit; font-size: 11px;
+    cursor: pointer; text-shadow: 1px 1px 0 #000;
+  }
+  .filter-btn.active { background: #6a3aff; border-color: #ffcc00; color: #fff; }
+
+  .arena-map { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+  .arena-card {
+    background: linear-gradient(180deg, #2a1a4a 0%, #1a0a2a 100%);
+    border: 3px solid #4a3a6a;
+    box-shadow: inset -2px -3px 0 #0a0018, inset 2px 2px 0 #6a5a8a, 0 3px 0 #0a0018;
+    padding: 12px; text-align: center; cursor: pointer; position: relative;
+    transition: all 0.15s;
+  }
+  .arena-card.unlocked { border-color: #ffcc00; }
+  .arena-card.unlocked:hover { transform: translateY(-4px); box-shadow: 0 6px 20px rgba(255,204,0,0.4); }
+  .arena-card.locked { opacity: 0.5; cursor: not-allowed; }
+  .arena-card.current { box-shadow: 0 0 20px #4ade80; border-color: #4ade80; }
+  .arena-card .ac-icon { font-size: 36px; margin-bottom: 6px; filter: drop-shadow(2px 2px 0 #000); }
+  .arena-card .ac-name { font-size: 13px; font-weight: bold; margin-bottom: 4px; text-shadow: 1px 1px 0 #000; }
+  .arena-card .ac-trophies { font-size: 11px; color: #ffcc00; text-shadow: 1px 1px 0 #000; }
+
+  .rank-list { display: flex; flex-direction: column; gap: 6px; max-width: 600px; margin: 0 auto; }
+  .rank-row {
+    display: flex; align-items: center; gap: 10px;
+    background: #2a1a4a; border: 2px solid #4a3a6a;
+    box-shadow: inset -1px -1px 0 #1a0a2a, inset 1px 1px 0 #5a4a8a;
+    padding: 8px 12px;
+  }
+  .rank-row.current { border-color: #ffcc00; }
+  .rank-row.locked { opacity: 0.5; }
+  .rank-row .rr-icon { font-size: 24px; filter: drop-shadow(1px 1px 0 #000); }
+  .rank-row .rr-info { flex: 1; }
+  .rank-row .rr-name { font-size: 13px; font-weight: bold; text-shadow: 1px 1px 0 #000; }
+  .rank-row .rr-req { font-size: 10px; color: #aaa; text-shadow: 1px 1px 0 #000; }
+  .rank-row .rr-progress { width: 80px; height: 10px; background: #1a0a2a; border: 2px solid #4a3a6a; }
+  .rank-row .rr-progress-fill { height: 100%; background: #4ade80; transition: width 0.3s; }
+
+  .shop-item {
+    display: flex; align-items: center; gap: 10px;
+    background: #2a1a4a; border: 3px solid #4a3a6a;
+    box-shadow: inset -2px -2px 0 #1a0a2a, inset 2px 2px 0 #5a4a8a;
+    padding: 10px; margin-bottom: 8px;
+  }
+  .shop-item .item-icon { font-size: 32px; filter: drop-shadow(2px 2px 0 #000); }
+  .shop-item .item-info { flex: 1; }
+  .shop-item .item-name { font-size: 14px; font-weight: bold; text-shadow: 1px 1px 0 #000; }
+  .shop-item .item-desc { font-size: 11px; color: #aaa; text-shadow: 1px 1px 0 #000; }
+
+  .cases-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+  .case-box {
+    background: linear-gradient(180deg, #2a1a4a 0%, #1a0a2a 100%);
+    border: 3px solid #4a3a6a;
+    box-shadow: inset -2px -3px 0 #0a0018, inset 2px 2px 0 #6a5a8a;
+    padding: 14px; text-align: center;
+  }
+  .case-box .case-icon { font-size: 44px; display: block; margin-bottom: 6px; filter: drop-shadow(2px 2px 0 #000); }
+  .case-box .case-name { font-size: 13px; font-weight: bold; margin-bottom: 4px; text-shadow: 1px 1px 0 #000; }
+  .case-box .case-desc { font-size: 10px; color: #aaa; margin-bottom: 8px; min-height: 26px; text-shadow: 1px 1px 0 #000; }
+  .case-box .case-price { font-size: 12px; font-weight: bold; margin-bottom: 8px; text-shadow: 1px 1px 0 #000; }
+
+  /* ACHIEVEMENTS */
+  .ach-list { display: flex; flex-direction: column; gap: 8px; max-width: 600px; margin: 0 auto; }
+  .ach-item {
+    display: flex; align-items: center; gap: 12px;
+    background: #2a1a4a; border: 3px solid #4a3a6a;
+    box-shadow: inset -2px -2px 0 #1a0a2a, inset 2px 2px 0 #5a4a8a;
+    padding: 12px;
+  }
+  .ach-item.completed {
+    border-color: #ffcc00;
+    background: linear-gradient(180deg, #3a2a5a 0%, #2a1a4a 100%);
+    box-shadow: inset -2px -2px 0 #6a4a00, inset 2px 2px 0 #ffe066, 0 0 15px rgba(255,204,0,0.3);
+  }
+  .ach-item .ach-icon { font-size: 36px; min-width: 48px; text-align: center; filter: drop-shadow(2px 2px 0 #000); }
+  .ach-item .ach-info { flex: 1; }
+  .ach-item .ach-name { font-size: 13px; font-weight: bold; text-shadow: 1px 1px 0 #000; }
+  .ach-item .ach-desc { font-size: 11px; color: #aaa; margin-top: 2px; }
+  .ach-item .ach-progress {
+    font-size: 10px; color: #ffcc00; margin-top: 4px; font-weight: bold;
+  }
+  .ach-item .ach-bar {
+    height: 8px; background: #1a0a2a; border: 2px solid #4a3a6a;
+    margin-top: 4px; position: relative;
+  }
+  .ach-item .ach-bar-fill {
+    height: 100%; background: linear-gradient(90deg, #4ade80, #ffcc00);
+    transition: width 0.3s;
+  }
+  .ach-item.completed .ach-bar-fill { background: #ffcc00; }
+
+  #battleScreen.active {
+    display: flex; flex-direction: column;
+    padding: 0; overflow: hidden;
+    position: absolute; inset: 0;
+    z-index: 5; background: #1a1030;
+  }
+  #enemyBar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 4px 10px;
+    background: repeating-linear-gradient(90deg, #4a1a1a, #4a1a1a 4px, #3a0a0a 4px, #3a0a0a 8px), #4a1a1a;
+    border-bottom: 4px solid #ff4a4a;
+    box-shadow: 0 3px 0 #2a0a0a;
+    height: 44px; flex-shrink: 0; font-size: 11px;
+  }
+  #enemyBar .eb-avatar {
+    width: 28px; height: 28px; background: #8a1a1a;
+    border: 2px solid #ffcc00;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  #enemyBar .eb-towers { display: flex; gap: 8px; }
+  .tower-pip { font-size: 10px; text-shadow: 1px 1px 0 #000; }
+  .tower-pip.dead { opacity: 0.3; }
+
+  #canvasArea {
+    flex: 1; display: flex; justify-content: center; align-items: center;
+    background: #0a0514; position: relative; overflow: hidden; min-height: 0;
+  }
+  #game {
+    cursor: crosshair; display: block;
+    image-rendering: pixelated;
+    max-width: 100%; max-height: 100%;
+  }
+  #topHud {
+    position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
+    background: rgba(10,5,20,0.95);
+    padding: 4px 14px; border: 3px solid #5a3a7a;
+    box-shadow: inset -1px -1px 0 #2a1a4a, inset 1px 1px 0 #8a7aaa;
+    font-size: 14px; font-weight: bold; z-index: 5;
+    text-shadow: 2px 2px 0 #000;
+  }
+  #timerDisplay.warn { color: #ff4a4a; }
+  #leaveBtn {
+    position: absolute; top: 6px; right: 6px;
+    background: linear-gradient(180deg, #e05a5a 0%, #a03a3a 100%);
+    border: 3px solid #ffcc00;
+    box-shadow: inset -1px -2px 0 #4a0a0a, inset 1px 1px 0 #ff8a8a, 0 2px 0 #4a0a0a;
+    color: #fff; padding: 4px 10px; font-family: inherit;
+    font-size: 10px; font-weight: bold; cursor: pointer; z-index: 6;
+    text-shadow: 1px 1px 0 #000;
+  }
+  #bottomPanel {
+    background: repeating-linear-gradient(0deg, #2a1a4a, #2a1a4a 4px, #24163f 4px, #24163f 8px), #2a1a4a;
+    border-top: 4px solid #5a3a7a;
+    box-shadow: 0 -3px 0 #1a0a2a;
+    padding: 6px;
+    flex-shrink: 0; z-index: 6;
+  }
+  #elixirBar { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; font-size: 11px; }
+  #elixirBarTrack {
+    flex: 1; height: 14px; background: #1a0a2a;
+    border: 2px solid #4a2a6a;
+    box-shadow: inset 1px 1px 0 #0a0018;
+    position: relative;
+  }
+  #elixirBarFill {
+    position: absolute; inset: 0; width: 50%;
+    background: linear-gradient(180deg, #b06aff 0%, #8a3aff 50%, #6a1aaa 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.3);
+    transition: width 0.1s linear;
+  }
+  #elixirBarText { color: #d06aff; font-weight: bold; min-width: 30px; text-shadow: 1px 1px 0 #000; }
+  #cardBar { display: flex; gap: 4px; justify-content: center; align-items: flex-end; }
+  .cr-card {
+    flex: 0 0 auto;
+    width: min(68px, 16vw); height: min(86px, 20vw);
+    background: #3a2a5a; border: 2px solid #6a4a8a;
+    box-shadow: inset -2px -2px 0 #1a0a2a, inset 2px 2px 0 #8a7aaa;
+    cursor: pointer; position: relative;
+    display: flex; flex-direction: column; align-items: center;
+    padding-top: 2px;
+    transition: transform 0.1s;
+  }
+  .cr-card:hover, .cr-card.selected { transform: translateY(-6px); border-color: #ffcc00; }
+  .cr-card.disabled { opacity: 0.4; }
+  .cr-card .cc-icon { font-size: min(28px, 7vw); }
+  .cr-card .cc-name { font-size: min(9px, 2.2vw); font-weight: bold; text-align: center; padding: 0 2px; line-height: 1.1; text-shadow: 1px 1px 0 #000; }
+  .cr-card .cc-cost {
+    position: absolute; top: -4px; right: -4px;
+    width: 20px; height: 20px;
+    background: #6a3aff; border: 2px solid #ffcc00;
+    box-shadow: 0 2px 0 #2a0a6a;
+    font-size: 11px; font-weight: bold;
+    display: flex; align-items: center; justify-content: center;
+    text-shadow: 1px 1px 0 #000;
+  }
+  #nextCardWrap { display: flex; flex-direction: column; align-items: center; margin-left: 6px; font-size: 8px; color: #aaa; text-shadow: 1px 1px 0 #000; }
+  .next-card-mini {
+    width: 40px; height: 52px;
+    background: #2a1a4a; border: 2px dashed #6a4a8a;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  #battleMsg {
+    position: absolute; top: 40px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,0.9); padding: 6px 14px;
+    border: 3px solid #ffcc00;
+    box-shadow: inset -1px -1px 0 #6a4a00, inset 1px 1px 0 #ffe066;
+    font-size: 11px; font-weight: bold;
+    opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 6;
+    text-shadow: 1px 1px 0 #000;
+  }
+  #battleMsg.show { opacity: 1; }
+
+  .modal-overlay {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: none; justify-content: center; align-items: center;
+    z-index: 100; padding: 16px;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal-box {
+    background: linear-gradient(180deg, #2a1a4a 0%, #1a0a2a 100%);
+    border: 4px solid #ffcc00;
+    box-shadow: inset -2px -2px 0 #6a4a00, inset 2px 2px 0 #ffe066, 0 6px 30px rgba(255,204,0,0.4);
+    padding: 20px; max-width: 480px; width: 100%;
+    text-align: center;
+    max-height: 90%; overflow-y: auto;
+  }
+  .modal-box h2 { color: #ffcc00; margin-bottom: 12px; font-size: 20px; text-shadow: 2px 2px 0 #6a4a00; }
+  .modal-box p { color: #ccc; margin-bottom: 12px; font-size: 13px; }
+  .modal-box input {
+    width: 100%; padding: 10px; margin-bottom: 10px;
+    background: #1a1030; border: 3px solid #4a3a6a;
+    box-shadow: inset 2px 2px 0 #0a0018;
+    color: #fff; font-family: inherit; font-size: 14px;
+  }
+
+  .case-reveal { display: flex; flex-direction: column; gap: 6px; margin: 14px 0; }
+  .reveal-card {
+    background: #3a2a5a; padding: 8px 12px;
+    display: flex; align-items: center; gap: 10px;
+    border: 2px solid #4a4a7a;
+    box-shadow: inset -1px -1px 0 #1a0a2a, inset 1px 1px 0 #6a5a8a;
+    animation: popIn 0.4s ease-out backwards;
+  }
+  @keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .reveal-card .rc-icon { font-size: 22px; }
+  .reveal-card .rc-name { flex: 1; text-align: left; font-size: 13px; font-weight: bold; }
+  .reveal-card .rc-amount { color: #ffcc00; font-weight: bold; font-size: 12px; }
+
+  #toast {
+    position: absolute; top: 70px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,0.95); color: #fff;
+    padding: 10px 20px; font-size: 13px; font-weight: bold;
+    border: 3px solid #ffcc00;
+    box-shadow: inset -1px -1px 0 #6a4a00, inset 1px 1px 0 #ffe066, 0 4px 12px rgba(0,0,0,0.6);
+    opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 200;
+    text-shadow: 1px 1px 0 #000;
+  }
+  #toast.show { opacity: 1; }
+
+  #tutorialOverlay {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.9);
+    display: none; justify-content: center; align-items: center;
+    z-index: 500; padding: 20px;
+  }
+  #tutorialOverlay.active { display: flex; }
+  .tutorial-box {
+    background: linear-gradient(180deg, #2a1a4a 0%, #1a0a2a 100%);
+    border: 4px solid #ffcc00;
+    box-shadow: inset -2px -2px 0 #6a4a00, inset 2px 2px 0 #ffe066, 0 6px 30px rgba(255,204,0,0.4);
+    padding: 24px; max-width: 500px; width: 100%;
+    text-align: center;
+  }
+  .tutorial-box h2 { color: #ffcc00; margin-bottom: 14px; font-size: 22px; text-shadow: 2px 2px 0 #6a4a00; }
+  .tutorial-box p { color: #ddd; margin-bottom: 14px; line-height: 1.5; font-size: 14px; }
+  .tutorial-box .tut-icon { font-size: 64px; margin-bottom: 12px; filter: drop-shadow(2px 2px 0 #000); }
+
+  #musicToggle {
+    position: absolute; bottom: 8px; right: 8px;
+    background: rgba(0,0,0,0.85); border: 3px solid #ffcc00;
+    box-shadow: inset -1px -2px 0 #6a4a00, inset 1px 1px 0 #ffe066;
+    color: #fff; width: 40px; height: 40px; cursor: pointer;
+    font-size: 18px; z-index: 50;
+  }
+
+  #achToast {
+    position: absolute; top: 120px; left: 50%; transform: translateX(-50%);
+    background: linear-gradient(180deg, #ffcc00 0%, #cc9900 100%);
+    color: #2a1a00;
+    padding: 12px 24px; font-size: 14px; font-weight: bold;
+    border: 3px solid #2a1a00;
+    box-shadow: 0 4px 20px rgba(255,204,0,0.8);
+    opacity: 0; transition: all 0.3s;
+    pointer-events: none; z-index: 300;
+    text-shadow: 1px 1px 0 #ffe066;
+    text-align: center;
+  }
+  #achToast.show { opacity: 1; transform: translateX(-50%) scale(1.1); }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div id="topbar">
+    <div id="playerInfo" onclick="navTo('stats')">
+      <div id="avatar">👤</div>
+      <div>
+        <div id="playerName">Игрок</div>
+        <div id="rankLabel">🥉 Бронза I · 0 🏆</div>
+      </div>
+    </div>
+    <div id="currencies">
+      <div class="currency gold"><span>🪙</span><span id="goldAmt">0</span></div>
+      <div class="currency gem"><span>💎</span><span id="gemAmt">0</span></div>
+      <div class="currency star"><span>⭐</span><span id="starAmt">0</span></div>
+    </div>
+  </div>
+
+  <div class="screen active" id="menuScreen">
+    <div class="menu-header">
+      <div class="logo">CLASH ROYALE</div>
+      <div class="subtitle">M I N I &nbsp; v10 &nbsp; PIXEL</div>
+    </div>
+
+    <div class="menu-tabs">
+      <button class="mc-tab active" data-tab="play" onclick="switchTab('play')">⚔️ Играть</button>
+      <button class="mc-tab" data-tab="progress" onclick="switchTab('progress')">📊 Прогресс</button>
+      <button class="mc-tab" data-tab="shop" onclick="switchTab('shop')">💰 Магазин</button>
+      <button class="mc-tab" data-tab="settings" onclick="switchTab('settings')">⚙️ Ещё</button>
+    </div>
+
+    <div class="tab-content">
+      <div class="tab-pane active" data-pane="play">
+        <button class="mc-btn green big" onclick="quickMatch()" style="width:100%; padding:18px; font-size:16px; margin-bottom:8px;">
+          <span class="mb-icon">⚔️</span> БЫСТРЫЙ БОЙ
+        </button>
+        <div class="tab-grid">
+          <button class="mc-btn" onclick="navTo('arenas')"><span class="mb-icon">🏟</span> Арены</button>
+          <button class="mc-btn purple" onclick="navTo('campaign')"><span class="mb-icon">📖</span> Кампания</button>
+        </div>
+      </div>
+
+      <div class="tab-pane" data-pane="progress">
+        <div class="tab-grid">
+          <button class="mc-btn" onclick="navTo('deck')"><span class="mb-icon">🎴</span> Колода</button>
+          <button class="mc-btn" onclick="navTo('collection')"><span class="mb-icon">🃏</span> Коллекция</button>
+          <button class="mc-btn" onclick="navTo('ranks')"><span class="mb-icon">🏆</span> Ранги</button>
+          <button class="mc-btn" onclick="navTo('stats')"><span class="mb-icon">📈</span> Статистика</button>
+          <button class="mc-btn gold" onclick="navTo('towers')" style="grid-column: span 2;"><span class="mb-icon">🏰</span> ПРОКАЧКА БАШЕН</button>
+          <button class="mc-btn gold" onclick="navTo('achievements')" style="grid-column: span 2;"><span class="mb-icon">🏅</span> ДОСТИЖЕНИЯ</button>
+        </div>
+      </div>
+
+      <div class="tab-pane" data-pane="shop">
+        <div class="tab-grid">
+          <button class="mc-btn gold" onclick="navTo('shop')"><span class="mb-icon">🛒</span> Магазин</button>
+          <button class="mc-btn purple" onclick="navTo('cases')"><span class="mb-icon">🎁</span> Кейсы</button>
+        </div>
+      </div>
+
+      <div class="tab-pane" data-pane="settings">
+        <div class="tab-grid">
+          <button class="mc-btn" onclick="startTutorial()"><span class="mb-icon">❓</span> Обучение</button>
+          <button class="mc-btn" onclick="showNameChange()"><span class="mb-icon">✏️</span> Сменить ник</button>
+          <button class="mc-btn red" onclick="resetProgress()" style="grid-column: span 2;"><span class="mb-icon">🗑️</span> СБРОС ПРОГРЕССА</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="arenasScreen">
+    <button class="back-btn" onclick="navTo('menu')">← Назад</button>
+    <h2 style="color:#ffcc00;margin-bottom:12px;font-size:18px;text-shadow:2px 2px 0 #000;">🏟 Арены</h2>
+    <div class="arena-map" id="arenaList"></div>
+  </div>
+
+  <div class="screen" id="campaignScreen">
+    <button class="back-btn" onclick="navTo('menu')">← Назад</button>
+    <h2 style="color:#ffcc00;margin-bottom:12px;font-size:18px;text-shadow:2px 2px 0 #000;">📖 Кампания</h2>
+    <div class="arena-map" id="campaignList"></div>
+  </div>
+
+  <div class="screen" id="ranksScreen">
+    <button class="back-btn" onclick="navTo('menu')">← Назад</button>
+    <h2 style="color:#ffcc00;margin-bottom:12px;font-size:18px;text-shadow:2px 2px 0 #000;">🏆 Ранги</h2>
+    <div class="rank-list" id="rankList"></div>
+  </div>
+
+  <div class="screen" id="statsScreen">
+    <button class="back-btn" onclick="navTo('menu')">← Назад</button>
+    <h2 style="color:#ffcc00;margin-bottom:12px;font-size:18px;text-shadow:2px 2px 0 #000;">📊 Статистика</h2>
+    <div style="max-width:500px;margin:0 auto;background:#2a1a4a;border:3px solid #4a3a6a;box-shadow:inset -2px -2px 0 #1a0a2a,inset 2px 2px 0 #5a4a8a;padding:16px;">
+      <div style="font-size:14px;line-height:2;">
+        <div>🏆 Побед: <b style="color:#4ade80" id="stWins">0</b></div>
+        <div>💀 Поражений: <b style="color:#ef4444" id="stLosses">0</b></div>
+        <div>🎯 Всего боёв: <b id="stTotal">0</b></div>
+        <div>📈 Winrate: <b style="color:#ffcc00" id="stWinrate">0%</b></div>
+        <div>🔥 Лучшая серия: <b id="stStreak">0</b></div>
+        <div>🃏 Карт: <b id="stCards">0</b></div>
+        <div>⚔️ Убито юнитов: <b id="stKills">0</b></div>
+        <div>🏅 Достижений: <b style="color:#ffcc00" id="stAch">0</b></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="achievementsScreen">
+    <button class="back-btn" onclick="navTo('menu')">← Назад</button>
+    <h2 style="color:#ffcc00;margin-bottom:12px;font-size:18px;text-shadow:2px 2px 0 #000;">🏅 Достижения</h2>
+    <div class="ach-list" id="achList"></div>
+  </div>
+
+  <div class="screen" id="deckScreen">
+    <button class="back-btn" onclick="navTo('menu')">← Назад</button>
+    <h2 style="color:#ffcc00;margin-bottom:8px;font-size:18px;text-shadow:2px 2px 0 #000;">🎴 Колода (10 карт)</h2>
+    <div id="deckStatus" style="text-align:center;padding:8px;background:#2a1a4a;margin-bottom:10px;font-weight:bold;border:2px solid #4a3a6a;"></div>
+    <div class="cards-grid" id="deckGrid"></div>
+  </div>
+
+  <div class="screen" id="collectionScreen">
+    <button class="back-btn" onclick="navTo('menu')">← Назад</button>
+    <h2 style="color:#ffcc00;margin-bottom:8px;font-size:18px;text-shadow:2px 2px 0 #000;">🃏 Коллекция</h2>
+    <div class="search-bar">
+      <input placeholder="🔍 Поиск карты..." oninput="searchCollection(this.value)">
+    </div>
+    <div class="filter-btns">
+      <button class="filter-btn active" data-rarity="all" onclick="filterCollection('all')">Все</button>
+      <button class="filter-btn" data-rarity="common" onclick="filterCollection('common')">⚪ Обычные</button>
+      <button class="filter-btn" data-rarity="rare" onclick="filterCollection('rare')">🟠 Редкие</button>
+      <button class="filter-btn" data-rarity="epic" onclick="filterCollection('epic')">🟣 Эпики</button>
+      <button class="filter-btn" data-rarity="legendary" onclick="filterCollection('legendary')">🟡 Легенды</button>
+      <button class="filter-btn" data-rarity="champion" onclick="filterCollection('champion')">🌟 Чемпионы</button>
+    </div>
+    <div class="cards-grid" id="collectionGrid"></div>
+  </div>
+
+  <div class="screen" id="shopScreen">
+    <button class="back-btn" onclick="navTo('menu')">← Назад</button>
+    <h2 style="color:#ffcc00;margin-bottom:12px;font-size:18px;text-shadow:2px 2px 0 #000;">🛒 Магазин</h2>
+    <div id="shopContent"></div>
+  </div>
+
+  <div class="screen" id="casesScreen">
+    <button class="back-btn" onclick="navTo('menu')">← Назад</button>
+    <h2 style="color:#ffcc00;margin-bottom:12px;font-size:18px;text-shadow:2px 2px 0 #000;">🎁 Кейсы</h2>
+    <div class="cases-grid" id="casesContent"></div>
+  </div>
+
+  <div class="screen" id="towersScreen">
+    <button class="back-btn" onclick="navTo('menu')">← Назад</button>
+    <h2 style="color:#ffcc00;margin-bottom:12px;font-size:18px;text-shadow:2px 2px 0 #000;">🏰 Прокачка башен</h2>
+    <div style="max-width:500px;margin:0 auto;" id="towersContent"></div>
+  </div>
+
+  <div class="screen" id="battleScreen">
+    <div id="enemyBar">
+      <div style="display:flex;align-items:center;gap:6px;">
+        <div class="eb-avatar">💀</div>
+        <div>
+          <div style="font-weight:bold;text-shadow:1px 1px 0 #000;" id="enemyName">Противник</div>
+          <div style="color:#ff9a9a;text-shadow:1px 1px 0 #000;" id="enemyRank">🥉 Бронза I</div>
+        </div>
+      </div>
+      <div class="eb-towers">
+        <div class="tower-pip" id="tpE1">🏰<span style="color:#ff4a4a">2000</span></div>
+        <div class="tower-pip" id="tpEK">👑<span style="color:#ff4a4a">3000</span></div>
+        <div class="tower-pip" id="tpE2">🏰<span style="color:#ff4a4a">2000</span></div>
+      </div>
+      <div style="font-size:11px;text-shadow:1px 1px 0 #000;">⚡ <span id="enemyElixirHud">5.0</span></div>
+    </div>
+
+    <div id="canvasArea">
+      <canvas id="game" width="600" height="720"></canvas>
+      <div id="topHud">
+        <span id="timerDisplay">3:00</span>
+        <span id="doubleElixirBadge" style="display:none;color:#ff6aff;font-size:10px;">⚡x2</span>
+      </div>
+      <div id="battleMsg"></div>
+      <button id="leaveBtn" onclick="leaveBattle()">✕</button>
+    </div>
+
+    <div id="bottomPanel">
+      <div id="elixirBar">
+        <span>⚡</span>
+        <div id="elixirBarTrack"><div id="elixirBarFill"></div></div>
+        <div id="elixirBarText">5.0</div>
+      </div>
+      <div id="cardBar"></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal">
+    <div class="modal-box" id="modalContent"></div>
+  </div>
+
+  <div id="tutorialOverlay">
+    <div class="tutorial-box" id="tutorialContent"></div>
+  </div>
+
+  <button id="musicToggle" onclick="toggleMusic()">🔊</button>
+  <div id="toast"></div>
+  <div id="achToast"></div>
+</div>
+
+<script>
+// ============================================================
+// 200+ КАРТ
+// ============================================================
+const ALL_CARDS = [
+  // COMMON (34)
+  { id:'knight',    name:'Рыцарь',     icon:'🛡️', cost:3, rarity:'common',    hp:700,  dmg:90,  range:35,  speed:0.6, atkCd:1.0, color:'#6fa8dc' },
+  { id:'archer',    name:'Лучница',    icon:'🏹', cost:3, rarity:'common',    hp:320,  dmg:60,  range:150, speed:0.7, atkCd:1.1, color:'#8fd14f', ranged:true },
+  { id:'goblin',    name:'Гоблин',     icon:'👺', cost:2, rarity:'common',    hp:200,  dmg:70,  range:30,  speed:0.9, atkCd:0.7, color:'#7ad14f' },
+  { id:'skeleton',  name:'Скелет',     icon:'💀', cost:1, rarity:'common',    hp:100,  dmg:50,  range:25,  speed:0.95, atkCd:0.8, color:'#ccc' },
+  { id:'minion',    name:'Миньон',     icon:'🦇', cost:3, rarity:'common',    hp:190,  dmg:55,  range:100, speed:0.8, atkCd:0.9, color:'#a06aff', ranged:true },
+  { id:'spearGob',  name:'Гоблин-копьё',icon:'🗡️', cost:2, rarity:'common',   hp:150,  dmg:45,  range:130, speed:0.85, atkCd:1.0, color:'#9ad14f', ranged:true },
+  { id:'bomber',    name:'Бомбер',     icon:'💣', cost:3, rarity:'common',    hp:220,  dmg:100, range:120, speed:0.65, atkCd:1.4, color:'#ff9a4f', ranged:true },
+  { id:'iceSpirit', name:'Ледяной дух',icon:'❄️', cost:1, rarity:'common',    hp:80,   dmg:40,  range:30,  speed:1.1, atkCd:1.0, color:'#8ae0ff' },
+  { id:'fireSpirit',name:'Огненный дух',icon:'🔥',cost:1, rarity:'common',    hp:80,   dmg:120, range:30,  speed:1.1, atkCd:1.0, color:'#ff6a4f' },
+  { id:'barbarian', name:'Варвар',     icon:'🪓', cost:5, rarity:'common',    hp:550,  dmg:100, range:35,  speed:0.65, atkCd:1.1, color:'#d09a5a' },
+  { id:'goblinGang',name:'Банда',      icon:'👥', cost:3, rarity:'common',    hp:160,  dmg:60,  range:30,  speed:0.85, atkCd:0.8, color:'#7ad14f' },
+  { id:'skeletons', name:'Скелеты',    icon:'☠️', cost:1, rarity:'common',    hp:80,   dmg:45,  range:25,  speed:0.95, atkCd:0.8, color:'#ddd' },
+  { id:'fireSpirit2',name:'Искра',     icon:'✨', cost:1, rarity:'common',    hp:90,   dmg:70,  range:30,  speed:1.05, atkCd:0.9, color:'#ffcc4a' },
+  { id:'bats',      name:'Летучие',    icon:'🦇', cost:2, rarity:'common',    hp:80,   dmg:35,  range:90,  speed:1.0, atkCd:0.8, color:'#aa77ee', ranged:true },
+  { id:'goblins',   name:'Гоблины',    icon:'👺', cost:2, rarity:'common',    hp:170,  dmg:65,  range:30,  speed:0.85, atkCd:0.8, color:'#7ad14f' },
+  { id:'spearGobs', name:'Копейщики',  icon:'🗡️', cost:2, rarity:'common',    hp:130,  dmg:40,  range:130, speed:0.85, atkCd:1.0, color:'#9ad14f', ranged:true },
+  { id:'rascal',    name:'Негодяй',    icon:'🎭', cost:3, rarity:'common',    hp:400,  dmg:80,  range:30,  speed:0.75, atkCd:1.0, color:'#aa66cc' },
+  { id:'minionHorde2',name:'Орда II',  icon:'🦇', cost:4, rarity:'common',    hp:120,  dmg:45,  range:100, speed:0.85, atkCd:1.0, color:'#a06aff', ranged:true },
+  { id:'goblinBarrel',name:'Бочка',    icon:'🛢️', cost:3, rarity:'common',    hp:100,  dmg:80,  range:90,  speed:1.0, atkCd:0.8, color:'#7ad14f', ranged:true },
+  { id:'goblinGiant',name:'Гоблин-гигант',icon:'👹',cost:5,rarity:'common',   hp:1500, dmg:120, range:35,  speed:0.5, atkCd:1.4, color:'#5a9a3a' },
+  { id:'snowman',    name:'Снеговик',  icon:'⛄', cost:2, rarity:'common',    hp:350,  dmg:60,  range:30,  speed:0.65, atkCd:1.0, color:'#aae0ff' },
+  { id:'spearGoblinMini',name:'Мини-копейщик',icon:'🗡️',cost:1,rarity:'common',hp:60,dmg:30,range:100,speed:0.9,atkCd:0.9,color:'#9ad14f',ranged:true },
+  { id:'my_guard',    name:'Стражник',      icon:'🛡️', cost:2, rarity:'common', hp:400, dmg:60,  range:30,  speed:0.7, atkCd:1.0, color:'#7a8aaa' },
+  { id:'my_runner',   name:'Бегун',         icon:'🏃', cost:2, rarity:'common', hp:250, dmg:55,  range:30,  speed:1.15, atkCd:0.7, color:'#d0d0d0' },
+  { id:'my_archer2',  name:'Снайпер',       icon:'🎯', cost:3, rarity:'common', hp:300, dmg:80,  range:200, speed:0.6, atkCd:1.4, color:'#9ad14f', ranged:true },
+  { id:'smallGoblin', name:'Мелкий гоблин', icon:'🟢', cost:1, rarity:'common', hp:80,  dmg:35,  range:25,  speed:1.0, atkCd:0.7, color:'#7ad14f' },
+  { id:'skeletonGuard',name:'Скелет-страж', icon:'🦴', cost:2, rarity:'common', hp:180, dmg:55,  range:28,  speed:0.8, atkCd:0.9, color:'#bbb' },
+  { id:'pixelWarrior',name:'Пиксель-воин', icon:'🟦', cost:2, rarity:'common', hp:450, dmg:75,  range:32,  speed:0.7, atkCd:1.0, color:'#4a8adc' },
+  { id:'pixelArcher', name:'Пиксель-лучник',icon:'🟩',cost:2, rarity:'common', hp:220, dmg:55,  range:160, speed:0.75, atkCd:1.2, color:'#4adc4a', ranged:true },
+  { id:'pixelMage',   name:'Пиксель-маг', icon:'🟪', cost:3, rarity:'common', hp:300, dmg:90,  range:140, speed:0.65, atkCd:1.4, color:'#9a4adc', ranged:true },
+  { id:'pixelGiant',  name:'Пиксель-гигант',icon:'🟧',cost:5,rarity:'common', hp:1800, dmg:140, range:38, speed:0.45, atkCd:1.6, color:'#dc8a4a' },
+  { id:'rockThrower', name:'Камнемёт',     icon:'🪨', cost:2, rarity:'common', hp:280, dmg:70,  range:130, speed:0.7, atkCd:1.3, color:'#8a8a6a', ranged:true },
+  { id:'tinyTank',    name:'Танкетка',     icon:'🚙', cost:3, rarity:'common', hp:700, dmg:80,  range:35,  speed:0.55, atkCd:1.4, color:'#5a7a5a' },
+  { id:'fastGoblin',  name:'Шустрый гоблин',icon:'💨',cost:2, rarity:'common', hp:140, dmg:50,  range:28,  speed:1.2, atkCd:0.8, color:'#7ad14f' },
+
+  // RARE (36)
+  { id:'giant',     name:'Гигант',     icon:'👹', cost:5, rarity:'rare',      hp:2000, dmg:160, range:40,  speed:0.35, atkCd:1.5, color:'#e06666' },
+  { id:'valkyrie',  name:'Валькирия',  icon:'⚔️', cost:4, rarity:'rare',      hp:900,  dmg:120, range:35,  speed:0.55, atkCd:1.2, color:'#e09a66' },
+  { id:'musketeer', name:'Мушкетёр',   icon:'🔫', cost:4, rarity:'rare',      hp:550,  dmg:110, range:160, speed:0.6, atkCd:1.1, color:'#ff9a00', ranged:true },
+  { id:'hog',       name:'Кабан',      icon:'🐗', cost:4, rarity:'rare',      hp:800,  dmg:140, range:30,  speed:0.85, atkCd:1.0, color:'#a07a5a' },
+  { id:'miniPekka', name:'Мини-ПЕККА', icon:'🔪', cost:4, rarity:'rare',      hp:1000, dmg:200, range:30,  speed:0.7, atkCd:1.2, color:'#5ac0ff' },
+  { id:'wizard',    name:'Волшебник',  icon:'🧙‍♂️', cost:5, rarity:'rare',    hp:600,  dmg:130, range:150, speed:0.55, atkCd:1.4, color:'#ff6aff', ranged:true },
+  { id:'giantSkel', name:'Гигант-скелет',icon:'🦴',cost:6,rarity:'rare',     hp:2400, dmg:180, range:40,  speed:0.3, atkCd:1.7, color:'#bbb' },
+  { id:'cannon',    name:'Пушка',      icon:'💥', cost:3, rarity:'rare',      hp:600,  dmg:120, range:170, speed:0, atkCd:1.0, color:'#888', ranged:true },
+  { id:'tombstone', name:'Надгробие',  icon:'🪦', cost:3, rarity:'rare',      hp:400,  dmg:0,   range:0,   speed:0, atkCd:2.0, color:'#6a6a7a' },
+  { id:'witch',     name:'Ведьма',     icon:'🧙', cost:5, rarity:'rare',      hp:700,  dmg:100, range:140, speed:0.5, atkCd:1.4, color:'#c23aff', ranged:true },
+  { id:'horde',     name:'Орда',       icon:'🐦', cost:5, rarity:'rare',      hp:140,  dmg:55,  range:100, speed:0.85, atkCd:1.0, color:'#a06aff', ranged:true },
+  { id:'fireball',  name:'Огн. шар',   icon:'☄️', cost:4, rarity:'rare',      hp:1,    dmg:400, range:0,   speed:0, atkCd:0, color:'#ff4a4a', spell:true },
+  { id:'mortar',    name:'Мортира',    icon:'🎆', cost:4, rarity:'rare',      hp:500,  dmg:130, range:220, speed:0, atkCd:2.0, color:'#8a7a5a', ranged:true },
+  { id:'goblinHut', name:'Хижина гоблинов',icon:'🏚️',cost:5,rarity:'rare',   hp:800,  dmg:0,   range:0,   speed:0, atkCd:0, color:'#7a5a3a' },
+  { id:'furnace',   name:'Печь',       icon:'🏭', cost:4, rarity:'rare',      hp:600,  dmg:0,   range:0,   speed:0, atkCd:0, color:'#ff6a3a' },
+  { id:'tesla',     name:'Тесла',      icon:'⚡', cost:4, rarity:'rare',      hp:700,  dmg:140, range:160, speed:0, atkCd:1.1, color:'#5a9aff', ranged:true },
+  { id:'infernoTower',name:'Инферно-башня',icon:'🔥',cost:5,rarity:'rare',  hp:800,  dmg:400, range:170, speed:0, atkCd:2.0, color:'#ff6a00', ranged:true },
+  { id:'barbarianHut',name:'Хижина варваров',icon:'🏠',cost:5,rarity:'rare', hp:900,  dmg:0,   range:0,   speed:0, atkCd:0, color:'#a06a3a' },
+  { id:'giantSkeleton',name:'Скелет-гигант',icon:'💀',cost:5,rarity:'rare',  hp:2000, dmg:150, range:40,  speed:0.35, atkCd:1.6, color:'#bbb' },
+  { id:'dartGoblin', name:'Дротик',     icon:'🎯', cost:3, rarity:'rare',     hp:350,  dmg:80,  range:180, speed:0.75, atkCd:0.9, color:'#7ad14f', ranged:true },
+  { id:'royalGiant', name:'Королевский гигант',icon:'👺',cost:6,rarity:'rare',hp:2500,dmg:180,range:40,  speed:0.3, atkCd:1.5, color:'#e06666' },
+  { id:'flyingMachine',name:'Леталка',   icon:'🛩️', cost:4, rarity:'rare',     hp:650,  dmg:110, range:170, speed:0.7, atkCd:1.1, color:'#5a9aff', ranged:true },
+  { id:'zappies',    name:'Заряд-машины',icon:'🔋',cost:4, rarity:'rare',     hp:250,  dmg:50,  range:110, speed:0.5, atkCd:1.4, color:'#ffcc00', ranged:true },
+  { id:'hunter',     name:'Охотник',    icon:'🔫', cost:4, rarity:'rare',     hp:700,  dmg:180, range:110, speed:0.6, atkCd:1.5, color:'#8a5a3a', ranged:true },
+  { id:'my_tank',     name:'Танк',          icon:'🚜', cost:5, rarity:'rare',   hp:2200, dmg:140, range:40, speed:0.4, atkCd:1.6, color:'#8a7a5a' },
+  { id:'my_mage',     name:'Маг огня',      icon:'🔥', cost:4, rarity:'rare',   hp:500, dmg:120, range:150, speed:0.55, atkCd:1.3, color:'#ff6a4a', ranged:true },
+  { id:'my_assassin', name:'Ассасин',       icon:'🗡️', cost:3, rarity:'rare',   hp:600, dmg:180, range:30, speed:0.95, atkCd:1.0, color:'#4a2a6a' },
+  { id:'battleRam',   name:'Таран',         icon:'🐏', cost:4, rarity:'rare',   hp:1100, dmg:170, range:35, speed:0.8, atkCd:1.2, color:'#a06a3a' },
+  { id:'giantCannon', name:'Гигант-пушка',  icon:'💥', cost:5, rarity:'rare',   hp:900, dmg:160, range:180, speed:0, atkCd:1.3, color:'#888', ranged:true },
+  { id:'snowWizard',  name:'Снежный маг',   icon:'❄️', cost:4, rarity:'rare',   hp:550, dmg:100, range:150, speed:0.55, atkCd:1.3, color:'#8ae0ff', ranged:true },
+  { id:'pixelTank',   name:'Пиксель-танк',  icon:'🟫', cost:5, rarity:'rare',   hp:2400, dmg:150, range:42, speed:0.35, atkCd:1.7, color:'#8a6a4a' },
+  { id:'pixelMage',   name:'Пиксель-маг II',icon:'🟪', cost:4, rarity:'rare',   hp:650, dmg:130, range:155, speed:0.55, atkCd:1.3, color:'#a04adc', ranged:true },
+  { id:'fireWizard',  name:'Огненный маг',  icon:'🔥', cost:4, rarity:'rare',   hp:520, dmg:125, range:150, speed:0.6, atkCd:1.3, color:'#ff6a00', ranged:true },
+  { id:'iceWarrior',  name:'Ледяной воин',  icon:'❄️', cost:4, rarity:'rare',   hp:900, dmg:120, range:35, speed:0.55, atkCd:1.3, color:'#8ae0ff' },
+  { id:'poisonArcher',name:'Ядовитый лучник',icon:'☠️',cost:3,rarity:'rare',  hp:400, dmg:90,  range:170, speed:0.7, atkCd:1.2, color:'#8aff4a', ranged:true },
+  { id:'heavyKnight', name:'Тяжёлый рыцарь',icon:'⚔️',cost:5,rarity:'rare',   hp:1400, dmg:170, range:38, speed:0.5, atkCd:1.4, color:'#5a7a9a' },
+  { id:'royalHogs',   name:'Королевские свиньи',icon:'🐗',cost:5,rarity:'rare',hp:750,dmg:130,range:30,  speed:0.9, atkCd:1.0, color:'#a07a5a' },
+  { id:'tornado',     name:'Смерч',         icon:'🌪️', cost:3, rarity:'rare',   hp:1,    dmg:60,  range:0,   speed:0, atkCd:0, color:'#8affff', spell:true },
+
+  // EPIC (32)
+  { id:'prince',    name:'Принц',      icon:'🐴', cost:5, rarity:'epic',      hp:1200, dmg:200, range:40,  speed:0.75, atkCd:1.4, color:'#c2a0ff' },
+  { id:'balloon',   name:'Шар',        icon:'🎈', cost:5, rarity:'epic',      hp:1000, dmg:300, range:30,  speed:0.5, atkCd:2.0, color:'#ff4a4a' },
+  { id:'pekka',     name:'ПЕККА',      icon:'🤖', cost:7, rarity:'epic',      hp:2800, dmg:350, range:40,  speed:0.45, atkCd:1.8, color:'#00ccff' },
+  { id:'golem',     name:'Голем',      icon:'🗿', cost:8, rarity:'epic',      hp:4000, dmg:200, range:40,  speed:0.25, atkCd:2.0, color:'#8a7a5a' },
+  { id:'balloonE',  name:'Эл. шар',    icon:'⚡', cost:4, rarity:'epic',      hp:1,    dmg:350, range:0,   speed:0, atkCd:0, color:'#ffff4a', spell:true },
+  { id:'xbow',      name:'Арбалет',    icon:'🎯', cost:6, rarity:'epic',      hp:800,  dmg:150, range:200, speed:0, atkCd:0.9, color:'#8a5a3a', ranged:true },
+  { id:'megaKnight',name:'Мега-рыцарь',icon:'🦾', cost:7, rarity:'epic',      hp:3000, dmg:250, range:40,  speed:0.6, atkCd:1.6, color:'#ff8a3a' },
+  { id:'electroWiz',name:'Эл. маг',    icon:'🧙‍♀️', cost:4, rarity:'epic',    hp:550,  dmg:90,  range:140, speed:0.55, atkCd:1.3, color:'#ffcc00', ranged:true },
+  { id:'darkPrince',name:'Тёмный принц',icon:'🖤', cost:5, rarity:'epic',     hp:1300, dmg:180, range:40,  speed:0.7, atkCd:1.3, color:'#4a2a6a' },
+  { id:'executioner',name:'Палач',     icon:'🪃', cost:5, rarity:'epic',      hp:1100, dmg:180, range:120, speed:0.55, atkCd:1.5, color:'#6a4a3a', ranged:true },
+  { id:'guards',    name:'Стражники',  icon:'🛡️', cost:3, rarity:'epic',      hp:300,  dmg:90,  range:30,  speed:0.75, atkCd:1.0, color:'#5a7a9a' },
+  { id:'bowler',    name:'Боулер',     icon:'🎳', cost:5, rarity:'epic',      hp:1400, dmg:180, range:120, speed:0.5, atkCd:1.8, color:'#9a6a3a', ranged:true },
+  { id:'lumberjack',name:'Дровосек',   icon:'🪓', cost:4, rarity:'epic',      hp:900,  dmg:160, range:30,  speed:0.8, atkCd:1.0, color:'#a05a3a' },
+  { id:'freeze',    name:'Заморозка',  icon:'🧊', cost:4, rarity:'epic',      hp:1,    dmg:100, range:0,   speed:0, atkCd:0, color:'#8ae0ff', spell:true },
+  { id:'poison',    name:'Яд',         icon:'☠️', cost:4, rarity:'epic',      hp:1,    dmg:300, range:0,   speed:0, atkCd:0, color:'#8aff4a', spell:true },
+  { id:'rage',      name:'Ярость',     icon:'💢', cost:2, rarity:'epic',      hp:1,    dmg:0,   range:0,   speed:0, atkCd:0, color:'#ff4a8a', spell:true },
+  { id:'mirror',    name:'Зеркало',    icon:'🪞', cost:1, rarity:'epic',      hp:1,    dmg:0,   range:0,   speed:0, atkCd:0, color:'#aaffff', spell:true },
+  { id:'eliteBarb', name:'Элита',      icon:'🪓', cost:6, rarity:'epic',      hp:800,  dmg:160, range:35,  speed:0.75, atkCd:1.0, color:'#aa5a3a' },
+  { id:'royalRecruit',name:'Королевский рекрут',icon:'⚔️',cost:7,rarity:'epic',hp:600,dmg:100,range:35,  speed:0.6, atkCd:1.0, color:'#c2a0ff' },
+  { id:'megaMinion', name:'Мега-миньон',icon:'🦇', cost:3, rarity:'epic',     hp:400,  dmg:160, range:40,  speed:0.7, atkCd:1.0, color:'#8a5aff' },
+  { id:'skeletonArmy',name:'Армия скелетов',icon:'☠️',cost:3,rarity:'epic',  hp:80,   dmg:50,  range:25,  speed:0.95, atkCd:0.8, color:'#ddd' },
+  { id:'goblinDrill',name:'Бур',        icon:'🪛', cost:4, rarity:'epic',     hp:500,  dmg:200, range:40,  speed:1.25, atkCd:1.5, color:'#7ad14f' },
+  { id:'ramRider',   name:'Всадник на овне',icon:'🐏',cost:4,rarity:'epic',  hp:800,  dmg:180, range:35,  speed:0.8, atkCd:1.2, color:'#a06a3a' },
+  { id:'earthquake', name:'Землетрясение',icon:'🌍',cost:3,rarity:'epic',    hp:1,    dmg:200, range:0,   speed:0, atkCd:0, color:'#8a5a3a', spell:true },
+  { id:'lightning',  name:'Молния',     icon:'⚡', cost:6, rarity:'epic',     hp:1,    dmg:500, range:0,   speed:0, atkCd:0, color:'#ffff4a', spell:true },
+  { id:'elixirGolem',name:'Эликсир-голем',icon:'🟣',cost:3,rarity:'epic',    hp:1200, dmg:100, range:40,  speed:0.35, atkCd:1.5, color:'#9a5aff' },
+  { id:'my_dragon2',  name:'Огнедышащий',   icon:'🐲', cost:6, rarity:'epic',   hp:1800, dmg:220, range:170, speed:0.55, atkCd:1.4, color:'#ff4a00', ranged:true },
+  { id:'my_titan',    name:'Колосс',        icon:'🗿', cost:8, rarity:'epic',   hp:4500, dmg:280, range:45, speed:0.25, atkCd:2.0, color:'#6a5a4a' },
+  { id:'royalGuard',  name:'Королевский страж',icon:'👑',cost:5,rarity:'epic', hp:1500, dmg:180, range:40, speed:0.5, atkCd:1.3, color:'#ffcc00' },
+  { id:'iceWizardL',  name:'Маг льда II',   icon:'🧊', cost:4, rarity:'epic',   hp:800,  dmg:150, range:140, speed:0.6, atkCd:1.4, color:'#8ae0ff', ranged:true },
+  { id:'darkWitch',   name:'Тёмная ведьма', icon:'🧙‍♀️', cost:5, rarity:'epic', hp:900, dmg:130, range:130, speed:0.55, atkCd:1.5, color:'#8a3aff', ranged:true },
+  { id:'goblinKing',  name:'Король гоблинов',icon:'👺', cost:6, rarity:'epic', hp:2000, dmg:200, range:35, speed:0.65, atkCd:1.4, color:'#5a9a3a' },
+
+  // LEGENDARY (22)
+  { id:'dragon',    name:'Дракон',     icon:'🐉', cost:5, rarity:'legendary', hp:1000, dmg:180, range:160, speed:0.65, atkCd:1.2, color:'#ffcc00', ranged:true },
+  { id:'pekkaL',    name:'Мега ПЕККА', icon:'⚡', cost:8, rarity:'legendary', hp:3200, dmg:400, range:40,  speed:0.5, atkCd:1.7, color:'#00ffff' },
+  { id:'princess',  name:'Принцесса',  icon:'👸', cost:3, rarity:'legendary', hp:400,  dmg:100, range:200, speed:0.65, atkCd:1.1, color:'#ff4aff', ranged:true },
+  { id:'iceWiz',    name:'Ледяной маг',icon:'🧊', cost:3, rarity:'legendary', hp:450,  dmg:80,  range:150, speed:0.6, atkCd:1.2, color:'#8ae0ff', ranged:true },
+  { id:'sparky',    name:'Спарки',     icon:'💫', cost:6, rarity:'legendary', hp:1200, dmg:600, range:120, speed:0.4, atkCd:2.5, color:'#ffff00', ranged:true },
+  { id:'lavaHound', name:'Лава-гончая',icon:'🌋', cost:7, rarity:'legendary', hp:3000, dmg:150, range:40,  speed:0.4, atkCd:1.6, color:'#ff3a3a' },
+  { id:'miner',     name:'Шахтёр',     icon:'⛏️', cost:3, rarity:'legendary', hp:1000, dmg:150, range:30,  speed:0.8, atkCd:1.0, color:'#8a5a3a' },
+  { id:'bandit',    name:'Бандитка',   icon:'🗡️', cost:3, rarity:'legendary', hp:1000, dmg:160, range:30,  speed:0.9, atkCd:1.0, color:'#c25a9a' },
+  { id:'royalGhost',name:'Призрак',    icon:'👻', cost:3, rarity:'legendary', hp:800,  dmg:130, range:30,  speed:0.85, atkCd:1.2, color:'#aae0ff' },
+  { id:'inferno',   name:'Инферно',    icon:'🔥', cost:5, rarity:'legendary', hp:1000, dmg:400, range:160, speed:0, atkCd:2.0, color:'#ff6a00', ranged:true },
+  { id:'nightWitch',name:'Ночная ведьма',icon:'🦇',cost:4,rarity:'legendary', hp:800,  dmg:120, range:120, speed:0.6, atkCd:1.4, color:'#5a2a8a', ranged:true },
+  { id:'graveyard', name:'Кладбище',   icon:'⚰️', cost:5, rarity:'legendary', hp:1,    dmg:200, range:0,   speed:0, atkCd:0, color:'#6a5a5a', spell:true },
+  { id:'megaKnightL',name:'Мега-рыцарь L',icon:'🦾',cost:7,rarity:'legendary',hp:3300,dmg:280,range:40,speed:0.6,atkCd:1.5, color:'#ff8a3a' },
+  { id:'phoenix',    name:'Феникс',     icon:'🔥', cost:5, rarity:'legendary',hp:1000, dmg:180, range:150, speed:0.7, atkCd:1.1, color:'#ff6a00', ranged:true },
+  { id:'my_angel',    name:'Ангел',         icon:'👼', cost:6, rarity:'legendary', hp:1500, dmg:200, range:150, speed:0.65, atkCd:1.2, color:'#ffffaa', ranged:true },
+  { id:'my_devil',    name:'Дьявол',        icon:'😈', cost:7, rarity:'legendary', hp:2500, dmg:350, range:40, speed:0.6, atkCd:1.5, color:'#8a0000' },
+  { id:'shadowWitch', name:'Теневая ведьма',icon:'🌑', cost:5, rarity:'legendary', hp:1100, dmg:170, range:130, speed:0.65, atkCd:1.3, color:'#2a0a4a', ranged:true },
+  { id:'kingSkeleton',name:'Король скелетов',icon:'💀',cost:6,rarity:'legendary',hp:2200,dmg:220,range:40, speed:0.55, atkCd:1.4, color:'#ffffff' },
+  { id:'pixelKnight', name:'Пиксель-рыцарь',icon:'🟦', cost:5, rarity:'legendary', hp:2000, dmg:250, range:35, speed:0.6, atkCd:1.3, color:'#4a8adc' },
+  { id:'pixelWizard', name:'Пиксель-волшебник',icon:'🟪',cost:5,rarity:'legendary',hp:1400,dmg:220,range:160,speed:0.6,atkCd:1.3,color:'#9a4adc',ranged:true },
+  { id:'pixelDragon', name:'Пиксель-дракон',icon:'🟩', cost:6, rarity:'legendary', hp:1800, dmg:260, range:150, speed:0.6, atkCd:1.4, color:'#4adc4a', ranged:true },
+  { id:'superGolem',  name:'Супер-голем',   icon:'🌑', cost:8, rarity:'legendary', hp:4200, dmg:320, range:45, speed:0.3, atkCd:2.0, color:'#3a2a4a' },
+
+  // CHAMPION (12)
+  { id:'champion1', name:'Герой',      icon:'🦸', cost:5, rarity:'champion',  hp:1800, dmg:250, range:40,  speed:0.65, atkCd:1.2, color:'#ffcc00' },
+  { id:'champion2', name:'Титан',      icon:'🦾', cost:6, rarity:'champion',  hp:2600, dmg:300, range:40,  speed:0.5, atkCd:1.5, color:'#ff4aff' },
+  { id:'champion3', name:'Маг-мастер', icon:'🧙', cost:5, rarity:'champion',  hp:1200, dmg:220, range:170, speed:0.6, atkCd:1.3, color:'#4affff', ranged:true },
+  { id:'champion4', name:'Король',     icon:'👑', cost:7, rarity:'champion',  hp:3000, dmg:350, range:40,  speed:0.55, atkCd:1.4, color:'#ffaa00' },
+  { id:'champion5', name:'Мастер клинка',icon:'🗡️',cost:5,rarity:'champion',  hp:2000, dmg:280, range:40,  speed:0.7, atkCd:1.2, color:'#4affff' },
+  { id:'champion6', name:'Дракон-бог', icon:'🐲', cost:8, rarity:'champion',  hp:3500, dmg:400, range:160, speed:0.5, atkCd:1.4, color:'#ff00ff', ranged:true },
+  { id:'my_creator',  name:'Создатель',     icon:'🌟', cost:9, rarity:'champion', hp:4000, dmg:500, range:160, speed:0.5, atkCd:1.5, color:'#ffcc00', ranged:true },
+  { id:'champion7', name:'Император',  icon:'👑', cost:7, rarity:'champion',  hp:3200, dmg:380, range:40,  speed:0.6, atkCd:1.3, color:'#ffaa00' },
+  { id:'champion8', name:'Архимаг',    icon:'🧙‍♂️', cost:6, rarity:'champion',  hp:1600, dmg:300, range:180, speed:0.55, atkCd:1.4, color:'#ff88ff', ranged:true },
+  { id:'champion9', name:'Бог войны',  icon:'⚔️', cost:8, rarity:'champion',  hp:3800, dmg:450, range:45,  speed:0.5, atkCd:1.5, color:'#ff0000' },
+  { id:'champion10',name:'Пиксель-бог',icon:'🔷', cost:9, rarity:'champion',  hp:4200, dmg:520, range:170, speed:0.5, atkCd:1.4, color:'#00aaff', ranged:true },
+  { id:'champion11',name:'Тёмный лорд',icon:'🌑', cost:8, rarity:'champion',  hp:3600, dmg:420, range:45,  speed:0.5, atkCd:1.4, color:'#2a0a4a' },
+];
+
+const RARITY_INFO = {
+  common:    { label:'Обычная',    color:'#8a8a8a' },
+  rare:      { label:'Редкая',     color:'#ff9a00' },
+  epic:      { label:'Эпическая',  color:'#c23aff' },
+  legendary: { label:'Легендарная',color:'#ffcc00' },
+  champion:  { label:'Чемпион',    color:'#ff4aff' },
+};
+
+const ARENAS = [
+  { id:0, name:'Арена 1 · Гоблины',  icon:'🌳', trophies:0,    bg:'#4a7a4a', river:'#2a6ab0' },
+  { id:1, name:'Арена 2 · Кости',    icon:'💀', trophies:200,  bg:'#6a6a5a', river:'#5a5a8a' },
+  { id:2, name:'Арена 3 · Варвары',  icon:'⚔️', trophies:400,  bg:'#8a6a4a', river:'#a06a3a' },
+  { id:3, name:'Арена 4 · ПЕККА',    icon:'🤖', trophies:700,  bg:'#4a5a8a', river:'#2a6ab0' },
+  { id:4, name:'Арена 5 · Легенды',  icon:'🐉', trophies:1000, bg:'#7a5a8a', river:'#c23aff' },
+  { id:5, name:'Арена 6 · Чемпионы', icon:'👑', trophies:1400, bg:'#8a5a5a', river:'#ffcc00' },
+  { id:6, name:'Арена 7 · Лёд',      icon:'❄️', trophies:1800, bg:'#5a7a9a', river:'#aae0ff' },
+  { id:7, name:'Арена 8 · Огонь',    icon:'🔥', trophies:2200, bg:'#8a4a3a', river:'#ff6a3a' },
+  { id:8, name:'Арена 9 · Боги',     icon:'🌟', trophies:2800, bg:'#8a4a8a', river:'#ff4aff' },
+  { id:9, name:'Арена 10 · Легенда', icon:'💎', trophies:3500, bg:'#4a8a8a', river:'#4affff' },
+];
+
+const RANKS = [
+  { id:0,  name:'Бронза I',    icon:'🥉', min:0 },
+  { id:1,  name:'Бронза II',   icon:'🥉', min:100 },
+  { id:2,  name:'Бронза III',  icon:'🥉', min:200 },
+  { id:3,  name:'Серебро I',   icon:'🥈', min:350 },
+  { id:4,  name:'Серебро II',  icon:'🥈', min:500 },
+  { id:5,  name:'Серебро III', icon:'🥈', min:700 },
+  { id:6,  name:'Золото I',    icon:'🥇', min:900 },
+  { id:7,  name:'Золото II',   icon:'🥇', min:1200 },
+  { id:8,  name:'Золото III',  icon:'🥇', min:1500 },
+  { id:9,  name:'Мастер',      icon:'💠', min:1900 },
+  { id:10, name:'Гранд-мастер',icon:'💎', min:2400 },
+  { id:11, name:'Легенда',     icon:'🌟', min:3000 },
+];
+
+const CASES = [
+  { id:'wood',    name:'Деревянный',  icon:'📦', price:30,  currency:'gold', desc:'3 карты',  cards:3, weights:{ common:85, rare:15, epic:0, legendary:0, champion:0 } },
+  { id:'bronze',  name:'Бронзовый',  icon:'🎁', price:80,  currency:'gold', desc:'4 карты',  cards:4, weights:{ common:65, rare:30, epic:5, legendary:0, champion:0 } },
+  { id:'silver',  name:'Серебряный', icon:'🏆', price:200, currency:'gold', desc:'5 карт',   cards:5, weights:{ common:50, rare:35, epic:13, legendary:2, champion:0 } },
+  { id:'gold',    name:'Золотой',    icon:'👑', price:500, currency:'gold', desc:'7 карт',   cards:7, weights:{ common:30, rare:40, epic:22, legendary:8, champion:0 } },
+  { id:'epic',    name:'Эпический',  icon:'💜', price:100, currency:'gem',  desc:'4 карты+эпик',cards:4, weights:{ common:0, rare:50, epic:40, legendary:10, champion:0 } },
+  { id:'legend',  name:'Легендарный',icon:'💎', price:300, currency:'gem',  desc:'5 карт+легендарка',cards:5, weights:{ common:0, rare:30, epic:45, legendary:25, champion:0 } },
+  { id:'champion',name:'Чемпионский',icon:'⚡', price:600, currency:'gem',  desc:'5 карт + шанс на чемпиона', cards:5, weights:{ common:0, rare:20, epic:50, legendary:25, champion:5 } },
+  { id:'royal',   name:'Королевский',icon:'👸', price:800, currency:'gem',  desc:'7 карт, гарант легендарка', cards:7, weights:{ common:0, rare:25, epic:45, legendary:27, champion:3 } },
+];
+
+const CAMPAIGN = [
+  { id:0, name:'Урок 1: Гоблины', icon:'👺', desc:'Простые враги', arenaId:0, enemyLvl:1, reward:100 },
+  { id:1, name:'Урок 2: Скелеты', icon:'💀', desc:'Чуть сложнее', arenaId:1, enemyLvl:1, reward:150 },
+  { id:2, name:'Урок 3: Варвары', icon:'⚔️', desc:'Много HP', arenaId:2, enemyLvl:2, reward:200 },
+  { id:3, name:'Босс 1: ПЕККА',   icon:'🤖', desc:'Танк', arenaId:3, enemyLvl:2, reward:300, boss:true },
+  { id:4, name:'Урок 4: Легенды', icon:'🐉', desc:'Сильные карты', arenaId:4, enemyLvl:3, reward:400 },
+  { id:5, name:'Босс 2: Дракон',  icon:'🐲', desc:'Финальный бой', arenaId:5, enemyLvl:3, reward:600, boss:true },
+];
+
+// ============================================================
+// ДОСТИЖЕНИЯ
+// ============================================================
+const ACHIEVEMENTS = [
+  { id:'first_win',    name:'Первая победа',    icon:'🏆', desc:'Выиграй 1 бой',            check: p => (p.wins || 0) >= 1,     progress: p => Math.min(p.wins || 0, 1),  max: 1 },
+  { id:'wins_10',      name:'Десятник',         icon:'🎖️', desc:'Выиграй 10 боёв',          check: p => (p.wins || 0) >= 10,    progress: p => Math.min(p.wins || 0, 10), max: 10 },
+  { id:'wins_50',      name:'Полководец',       icon:'⚔️', desc:'Выиграй 50 боёв',          check: p => (p.wins || 0) >= 50,    progress: p => Math.min(p.wins || 0, 50), max: 50 },
+  { id:'wins_100',     name:'Легенда',          icon:'🌟', desc:'Выиграй 100 боёв',         check: p => (p.wins || 0) >= 100,   progress: p => Math.min(p.wins || 0, 100), max: 100 },
+  { id:'kills_100',    name:'Охотник',          icon:'🎯', desc:'Убей 100 юнитов',          check: p => (p.kills || 0) >= 100,  progress: p => Math.min(p.kills || 0, 100), max: 100 },
+  { id:'kills_500',    name:'Мясник',           icon:'🗡️', desc:'Убей 500 юнитов',          check: p => (p.kills || 0) >= 500,  progress: p => Math.min(p.kills || 0, 500), max: 500 },
+  { id:'kills_2000',   name:'Уничтожитель',     icon:'💀', desc:'Убей 2000 юнитов',         check: p => (p.kills || 0) >= 2000, progress: p => Math.min(p.kills || 0, 2000), max: 2000 },
+  { id:'cards_10',     name:'Коллекционер',     icon:'🃏', desc:'Открой 10 карт',           check: p => Object.keys(p.cards || {}).length >= 10,  progress: p => Math.min(Object.keys(p.cards || {}).length, 10), max: 10 },
+  { id:'cards_30',     name:'Магнат',           icon:'🎴', desc:'Открой 30 карт',           check: p => Object.keys(p.cards || {}).length >= 30,  progress: p => Math.min(Object.keys(p.cards || {}).length, 30), max: 30 },
+  { id:'cards_60',     name:'Библиотекарь',     icon:'📚', desc:'Открой 60 карт',           check: p => Object.keys(p.cards || {}).length >= 60,  progress: p => Math.min(Object.keys(p.cards || {}).length, 60), max: 60 },
+  { id:'cards_100',    name:'Энциклопедист',    icon:'📖', desc:'Открой 100 карт',          check: p => Object.keys(p.cards || {}).length >= 100, progress: p => Math.min(Object.keys(p.cards || {}).length, 100), max: 100 },
+  { id:'gold_1000',    name:'Богач',            icon:'💰', desc:'Накопи 1000 золота',       check: p => (p.gold || 0) >= 1000,  progress: p => Math.min(p.gold || 0, 1000), max: 1000 },
+  { id:'gold_5000',    name:'Миллионер',        icon:'🪙', desc:'Накопи 5000 золота',       check: p => (p.gold || 0) >= 5000,  progress: p => Math.min(p.gold || 0, 5000), max: 5000 },
+  { id:'trophies_500', name:'Восходящая звезда',icon:'⭐', desc:'500 кубков',               check: p => (p.trophies || 0) >= 500,  progress: p => Math.min(p.trophies || 0, 500), max: 500 },
+  { id:'trophies_1500',name:'Чемпион',          icon:'🏅', desc:'1500 кубков',              check: p => (p.trophies || 0) >= 1500, progress: p => Math.min(p.trophies || 0, 1500), max: 1500 },
+  { id:'streak_5',     name:'Серия',            icon:'🔥', desc:'5 побед подряд',           check: p => (p.bestStreak || 0) >= 5,  progress: p => Math.min(p.bestStreak || 0, 5), max: 5 },
+  { id:'streak_10',    name:'Неудержимый',      icon:'💥', desc:'10 побед подряд',          check: p => (p.bestStreak || 0) >= 10, progress: p => Math.min(p.bestStreak || 0, 10), max: 10 },
+  { id:'tower_king_5', name:'Крепость',         icon:'👑', desc:'Королевская башня 5 ур.', check: p => (p.towerLevel?.king || 1) >= 5,     progress: p => Math.min(p.towerLevel?.king || 1, 5), max: 5 },
+  { id:'tower_king_10',name:'Цитадель',         icon:'🏰', desc:'Королевская башня 10 ур.',check: p => (p.towerLevel?.king || 1) >= 10,    progress: p => Math.min(p.towerLevel?.king || 1, 10), max: 10 },
+  { id:'campaign_3',   name:'Ученик',           icon:'📖', desc:'Пройди 3 миссии кампании', check: p => (p.campaignCompleted || []).length >= 3, progress: p => Math.min((p.campaignCompleted || []).length, 3), max: 3 },
+  { id:'campaign_all', name:'Завоеватель',      icon:'🗺️', desc:'Пройди всю кампанию',      check: p => (p.campaignCompleted || []).length >= CAMPAIGN.length, progress: p => Math.min((p.campaignCompleted || []).length, CAMPAIGN.length), max: CAMPAIGN.length },
+  { id:'collector',    name:'Мастер',           icon:'💎', desc:'Все карты чемпионов',       check: p => ALL_CARDS.filter(c => c.rarity === 'champion').every(c => p.cards[c.id]), progress: p => ALL_CARDS.filter(c => c.rarity === 'champion' && p.cards[c.id]).length, max: ALL_CARDS.filter(c => c.rarity === 'champion').length },
+];
+
+const SAVE_KEY = 'clashRoyaleMini_v10';
+let player = null;
+
+function defaultPlayer() {
+  return {
+    id: 'p_' + Math.random().toString(36).substring(2, 10),
+    name: 'Игрок' + Math.floor(Math.random() * 1000),
+    trophies:0, gold:1500, gems:300, stars:5,
+    wins:0, losses:0, streak:0, bestStreak:0, kills:0,
+    tutorialDone: false,
+    towerLevel: { king: 1, princess: 1 },
+    campaignCompleted: [],
+    achievements: [],
+    cards:{ knight:1, archer:1, goblin:1, skeleton:1, minion:1, bomber:1, spearGob:1, barbarian:1 },
+    deck:['knight','archer','goblin','skeleton','minion','bomber','spearGob','barbarian'],
+  };
+}
+
+function loadPlayer() {
+  try {
+    const s = localStorage.getItem(SAVE_KEY);
+    if (s) {
+      player = Object.assign(defaultPlayer(), JSON.parse(s));
+      if (!player.towerLevel) player.towerLevel = { king: 1, princess: 1 };
+      if (!player.campaignCompleted) player.campaignCompleted = [];
+      if (!player.achievements) player.achievements = [];
+      return;
+    }
+  } catch(e){}
+  player = defaultPlayer(); savePlayer();
+}
+function savePlayer() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(player)); } catch(e){} }
+function resetProgress() {
+  if (!confirm('Сбросить весь прогресс?')) return;
+  player = defaultPlayer(); savePlayer(); refreshUI(); toast('Прогресс сброшен');
+}
+
+function checkAchievements() {
+  if (!player.achievements) player.achievements = [];
+  ACHIEVEMENTS.forEach(ach => {
+    if (player.achievements.includes(ach.id)) return;
+    if (ach.check(player)) {
+      player.achievements.push(ach.id);
+      showAchToast(ach);
+      if (ach.id === 'first_win') { player.gold += 200; }
+      else if (ach.id === 'wins_10') { player.gems += 10; }
+      else if (ach.id === 'wins_50') { player.gems += 30; }
+      else if (ach.id === 'wins_100') { player.gems += 100; }
+      else { player.gold += 100; }
+      savePlayer();
+    }
+  });
+}
+function showAchToast(ach) {
+  const t = document.getElementById('achToast');
+  t.innerHTML = `${ach.icon} ДОСТИЖЕНИЕ!<br><b>${ach.name}</b>`;
+  t.classList.add('show');
+  playSound('win');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+function navTo(screen) {
+  if (screen !== 'battle' && battle) {
+    if (battleRAF) { cancelAnimationFrame(battleRAF); battleRAF = null; }
+    battle = null; _loopGuard = false;
+  }
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById(screen + 'Screen');
+  if (target) target.classList.add('active');
+  if (screen === 'collection') renderCollection();
+  if (screen === 'deck') renderDeck();
+  if (screen === 'shop') renderShop();
+  if (screen === 'cases') renderCases();
+  if (screen === 'arenas') renderArenas();
+  if (screen === 'ranks') renderRanks();
+  if (screen === 'stats') renderStats();
+  if (screen === 'towers') renderTowers();
+  if (screen === 'campaign') renderCampaign();
+  if (screen === 'achievements') renderAchievements();
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.mc-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.toggle('active', p.dataset.pane === tab));
+}
+
+function refreshUI() {
+  document.getElementById('playerName').textContent = player.name;
+  const rank = getCurrentRank();
+  document.getElementById('rankLabel').textContent = `${rank.icon} ${rank.name} · ${player.trophies} 🏆`;
+  document.getElementById('goldAmt').textContent = player.gold;
+  document.getElementById('gemAmt').textContent = player.gems;
+  document.getElementById('starAmt').textContent = player.stars;
+}
+function getCurrentRank() {
+  let r = RANKS[0];
+  for (const rank of RANKS) if (player.trophies >= rank.min) r = rank;
+  return r;
+}
+function getNextRank() {
+  const cur = getCurrentRank();
+  return RANKS[RANKS.indexOf(cur) + 1] || null;
+}
+function getCurrentArena() {
+  let a = ARENAS[0];
+  for (const ar of ARENAS) if (player.trophies >= ar.trophies) a = ar;
+  return a;
+}
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 2000);
+}
+function showModal(html) {
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modal').classList.add('active');
+}
+function closeModal() { document.getElementById('modal').classList.remove('active'); }
+document.getElementById('modal').onclick = (e) => { if (e.target.id === 'modal') closeModal(); };
+
+function showNameChange() {
+  showModal(`
+    <h2>✏️ Сменить ник</h2>
+    <input id="newNameInput" value="${player.name}" maxlength="16">
+    <button class="mc-btn green" onclick="changeName()" style="width:100%;">Сохранить</button>
+  `);
+}
+function changeName() {
+  const newName = document.getElementById('newNameInput').value.trim();
+  if (!newName) return;
+  player.name = newName;
+  savePlayer(); refreshUI(); closeModal();
+  toast('Ник: ' + newName);
+}
+
+const TUTORIAL_STEPS = [
+  { icon:'👋', title:'Добро пожаловать!', text:'Мини-версия Clash Royale в пиксельном стиле!' },
+  { icon:'⚡', title:'Эликсир', text:'Фиолетовая полоска внизу — эликсир. Копится сам.' },
+  { icon:'🐢', title:'Медленные юниты', text:'Все юниты двигаются медленно — есть время подумать!' },
+  { icon:'🎴', title:'Рука карт', text:'Внизу 4 карты. Нажми на карту, потом кликни на свою половину поля.' },
+  { icon:'🏰', title:'3 башни', text:'2 принцессы и король. Прокачивай башни за золото!' },
+  { icon:'🏅', title:'Достижения', text:'Выполняй достижения — получай награды!' },
+  { icon:'🚀', title:'Поехали!', text:'Получай кейсы, открывай карты, побеждай!' },
+];
+let tutorialStep = 0;
+function startTutorial() {
+  tutorialStep = 0;
+  renderTutorial();
+  document.getElementById('tutorialOverlay').classList.add('active');
+}
+function renderTutorial() {
+  const step = TUTORIAL_STEPS[tutorialStep];
+  document.getElementById('tutorialContent').innerHTML = `
+    <div class="tut-icon">${step.icon}</div>
+    <h2>${step.title}</h2>
+    <p>${step.text}</p>
+    <div style="color:#666;font-size:11px;margin-bottom:12px;">Шаг ${tutorialStep+1} / ${TUTORIAL_STEPS.length}</div>
+    <button class="mc-btn green" onclick="nextTutorial()" style="width:100%;">
+      ${tutorialStep === TUTORIAL_STEPS.length-1 ? '✅ Начать!' : 'Далее →'}
+    </button>
+  `;
+}
+function nextTutorial() {
+  tutorialStep++;
+  if (tutorialStep >= TUTORIAL_STEPS.length) {
+    document.getElementById('tutorialOverlay').classList.remove('active');
+    player.tutorialDone = true;
+    toast('Обучение пройдено! +100 🪙');
+    player.gold += 100; savePlayer(); refreshUI();
+    return;
+  }
+  renderTutorial();
+}
+
+function renderArenas() {
+  const cont = document.getElementById('arenaList');
+  cont.innerHTML = '';
+  const cur = getCurrentArena();
+  ARENAS.forEach(ar => {
+    const unlocked = player.trophies >= ar.trophies;
+    const isCur = cur.id === ar.id;
+    const div = document.createElement('div');
+    div.className = `arena-card ${unlocked?'unlocked':'locked'} ${isCur?'current':''}`;
+    div.innerHTML = `
+      <div class="ac-icon">${ar.icon}</div>
+      <div class="ac-name">${ar.name}</div>
+      <div class="ac-trophies">${unlocked?'✓ Доступна':`🔒 ${ar.trophies} 🏆`}</div>
+    `;
+    if (unlocked) div.onclick = () => startBattle(ar.id);
+    cont.appendChild(div);
+  });
+}
+
+function renderCampaign() {
+  const cont = document.getElementById('campaignList');
+  cont.innerHTML = '';
+  const completed = player.campaignCompleted || [];
+  CAMPAIGN.forEach((c, idx) => {
+    const prevDone = idx === 0 || completed.includes(CAMPAIGN[idx-1].id);
+    const isDone = completed.includes(c.id);
+    const div = document.createElement('div');
+    div.className = `arena-card ${prevDone ? 'unlocked' : 'locked'} ${isDone ? 'current' : ''}`;
+    div.innerHTML = `
+      <div class="ac-icon">${c.icon}</div>
+      <div class="ac-name">${c.name}</div>
+      <div class="ac-trophies">${isDone ? '✅ Пройдено' : (prevDone ? '⚔️ Начать (+'+c.reward+'🪙)' : '🔒 Пройди предыдущий')}</div>
+    `;
+    if (prevDone && !isDone) div.onclick = () => startCampaignBattle(c);
+    cont.appendChild(div);
+  });
+}
+
+function renderRanks() {
+  const cont = document.getElementById('rankList');
+  cont.innerHTML = '';
+  const cur = getCurrentRank();
+  const next = getNextRank();
+  RANKS.forEach(r => {
+    const unlocked = player.trophies >= r.min;
+    const isCur = cur.id === r.id;
+    let progress = 0;
+    if (isCur && next) progress = ((player.trophies - r.min) / (next.min - r.min)) * 100;
+    else if (unlocked) progress = 100;
+    const div = document.createElement('div');
+    div.className = `rank-row ${isCur?'current':''} ${unlocked?'':'locked'}`;
+    div.innerHTML = `
+      <div class="rr-icon">${r.icon}</div>
+      <div class="rr-info">
+        <div class="rr-name">${r.name}</div>
+        <div class="rr-req">${unlocked?'✓ Достигнут':`Нужно ${r.min} 🏆`}</div>
+      </div>
+      <div class="rr-progress"><div class="rr-progress-fill" style="width:${progress}%"></div></div>
+    `;
+    cont.appendChild(div);
+  });
+}
+
+function renderStats() {
+  document.getElementById('stWins').textContent = player.wins;
+  document.getElementById('stLosses').textContent = player.losses;
+  document.getElementById('stTotal').textContent = player.wins + player.losses;
+  document.getElementById('stWinrate').textContent =
+    (player.wins + player.losses) ? Math.round(player.wins/(player.wins+player.losses)*100)+'%' : '0%';
+  document.getElementById('stStreak').textContent = player.bestStreak;
+  document.getElementById('stCards').textContent = Object.keys(player.cards).length;
+  document.getElementById('stKills').textContent = player.kills;
+  document.getElementById('stAch').textContent = (player.achievements || []).length;
+}
+
+function renderAchievements() {
+  const cont = document.getElementById('achList');
+  cont.innerHTML = '';
+  ACHIEVEMENTS.forEach(ach => {
+    const done = (player.achievements || []).includes(ach.id);
+    const prog = ach.progress(player);
+    const pct = (prog / ach.max) * 100;
+    const div = document.createElement('div');
+    div.className = `ach-item ${done ? 'completed' : ''}`;
+    div.innerHTML = `
+      <div class="ach-icon">${ach.icon}</div>
+      <div class="ach-info">
+        <div class="ach-name">${ach.name} ${done ? '✅' : ''}</div>
+        <div class="ach-desc">${ach.desc}</div>
+        <div class="ach-progress">${prog} / ${ach.max}</div>
+        <div class="ach-bar"><div class="ach-bar-fill" style="width:${pct}%"></div></div>
+      </div>
+    `;
+    cont.appendChild(div);
+  });
+}
+
+function getTowerUpgradeCost(type, currentLevel) {
+  const base = type === 'king' ? 800 : 500;
+  return base * currentLevel * currentLevel;
+}
+const BASE_HP_KING = 3000;
+const BASE_HP_PRINCESS = 2000;
+function getTowerHP(type) {
+  const lvl = (player.towerLevel?.[type] || 1);
+  const base = type === 'king' ? BASE_HP_KING : BASE_HP_PRINCESS;
+  const mult = 1 + (lvl - 1) * 0.10;
+  return Math.round(base * mult);
+}
+
+function renderTowers() {
+  const cont = document.getElementById('towersContent');
+  if (!cont) return;
+  const kl = player.towerLevel?.king || 1;
+  const pl = player.towerLevel?.princess || 1;
+  const kHP = getTowerHP('king');
+  const pHP = getTowerHP('princess');
+  const kCost = getTowerUpgradeCost('king', kl);
+  const pCost = getTowerUpgradeCost('princess', pl);
+  const kMax = kl >= 10;
+  const pMax = pl >= 10;
+
+  cont.innerHTML = `
+    <div style="background:linear-gradient(180deg,#2a1a4a 0%,#1a0a2a 100%);border:3px solid #ffcc00;box-shadow:inset -2px -2px 0 #6a4a00,inset 2px 2px 0 #ffe066;padding:16px;margin-bottom:12px;text-align:center;">
+      <div style="font-size:56px;filter:drop-shadow(3px 3px 0 #000);">👑</div>
+      <div style="font-size:16px;font-weight:bold;color:#ffcc00;text-shadow:2px 2px 0 #000;">Королевская башня</div>
+      <div style="font-size:14px;margin:6px 0;text-shadow:1px 1px 0 #000;">Уровень: <b>${kl}</b> / 10</div>
+      <div style="font-size:13px;color:#aaa;margin-bottom:10px;text-shadow:1px 1px 0 #000;">HP: <b style="color:#4ade80;">${kHP}</b></div>
+      ${kMax
+        ? '<div style="color:#ffcc00;font-weight:bold;text-shadow:2px 2px 0 #000;">⭐ МАКСИМУМ</div>'
+        : `<button class="mc-btn gold" onclick="upgradeTower('king')" style="width:100%;" ${player.gold < kCost ? 'disabled' : ''}>
+             ⬆ Прокачать за ${kCost} 🪙
+           </button>`}
+    </div>
+    <div style="background:linear-gradient(180deg,#2a1a4a 0%,#1a0a2a 100%);border:3px solid #ffcc00;box-shadow:inset -2px -2px 0 #6a4a00,inset 2px 2px 0 #ffe066;padding:16px;text-align:center;">
+      <div style="font-size:56px;filter:drop-shadow(3px 3px 0 #000);">🏰</div>
+      <div style="font-size:16px;font-weight:bold;color:#ffcc00;text-shadow:2px 2px 0 #000;">Башни принцесс</div>
+      <div style="font-size:14px;margin:6px 0;text-shadow:1px 1px 0 #000;">Уровень: <b>${pl}</b> / 10</div>
+      <div style="font-size:13px;color:#aaa;margin-bottom:10px;text-shadow:1px 1px 0 #000;">HP: <b style="color:#4ade80;">${pHP}</b></div>
+      ${pMax
+        ? '<div style="color:#ffcc00;font-weight:bold;text-shadow:2px 2px 0 #000;">⭐ МАКСИМУМ</div>'
+        : `<button class="mc-btn gold" onclick="upgradeTower('princess')" style="width:100%;" ${player.gold < pCost ? 'disabled' : ''}>
+             ⬆ Прокачать за ${pCost} 🪙
+           </button>`}
+    </div>
+  `;
+}
+function upgradeTower(type) {
+  const cur = player.towerLevel?.[type] || 1;
+  if (cur >= 10) { toast('Максимум'); return; }
+  const cost = getTowerUpgradeCost(type, cur);
+  if (player.gold < cost) { toast('Мало золота'); return; }
+  player.gold -= cost;
+  player.towerLevel = player.towerLevel || { king: 1, princess: 1 };
+  player.towerLevel[type] = cur + 1;
+  savePlayer(); refreshUI(); renderTowers(); checkAchievements();
+  playSound('caseOpen');
+  toast(`${type === 'king' ? 'Король' : 'Принцессы'} → Ур.${cur + 1}`);
+}
+
+let collectionFilter = 'all';
+let collectionSearch = '';
+function filterCollection(rarity) {
+  collectionFilter = rarity;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.rarity === rarity));
+  renderCollection();
+}
+function searchCollection(val) {
+  collectionSearch = val.toLowerCase();
+  renderCollection();
+}
+function renderCollection() {
+  const grid = document.getElementById('collectionGrid');
+  grid.innerHTML = '';
+  ALL_CARDS.forEach(card => {
+    if (collectionFilter !== 'all' && card.rarity !== collectionFilter) return;
+    if (collectionSearch && !card.name.toLowerCase().includes(collectionSearch)) return;
+    const level = player.cards[card.id] || 0;
+    const owned = level > 0;
+    const div = document.createElement('div');
+    div.className = `card-item rarity-${card.rarity} ${owned?'':'locked'}`;
+    div.innerHTML = `
+      <div class="card-cost">${card.cost}</div>
+      <div class="card-icon">${card.icon}</div>
+      <div class="card-name">${card.name}</div>
+      <div class="card-level">${owned?'Ур.'+level:'—'}</div>
+      ${owned && level < 5 ? `<button class="upgrade-btn">⬆${upgradeCost(level)}🪙</button>` : ''}
+    `;
+    if (owned && level < 5) {
+      const btn = div.querySelector('.upgrade-btn');
+      if (player.gold < upgradeCost(level)) btn.disabled = true;
+      btn.onclick = (e) => { e.stopPropagation(); upgradeCard(card.id); };
+    }
+    grid.appendChild(div);
+  });
+}
+function upgradeCost(level) { return 100 * level * level; }
+function upgradeCard(id) {
+  const card = ALL_CARDS.find(c => c.id === id);
+  const level = player.cards[id];
+  const cost = upgradeCost(level);
+  if (player.gold < cost) return;
+  player.gold -= cost;
+  player.cards[id] = level + 1;
+  savePlayer(); refreshUI(); renderCollection();
+  toast(`${card.name} → Ур.${level+1}`);
+}
+function renderDeck() {
+  const grid = document.getElementById('deckGrid');
+  grid.innerHTML = '';
+  const status = document.getElementById('deckStatus');
+  const count = player.deck.length;
+  status.textContent = `Карт в колоде: ${count} / 10`;
+  status.style.color = count === 10 ? '#4ade80' : '#ef4444';
+  status.style.border = `2px solid ${count === 10 ? '#4ade80' : '#ef4444'}`;
+  ALL_CARDS.forEach(card => {
+    const level = player.cards[card.id] || 0;
+    if (!level) return;
+    const inDeck = player.deck.includes(card.id);
+    const div = document.createElement('div');
+    div.className = `card-item rarity-${card.rarity}`;
+    if (inDeck) div.style.borderColor = '#4ade80';
+    div.innerHTML = `
+      <div class="card-cost">${card.cost}</div>
+      <div class="card-icon">${card.icon}</div>
+      <div class="card-name">${card.name}</div>
+      <div class="card-level">Ур.${level}</div>
+    `;
+    div.onclick = () => toggleDeckCard(card.id);
+    grid.appendChild(div);
+  });
+}
+function toggleDeckCard(id) {
+  const idx = player.deck.indexOf(id);
+  if (idx >= 0) player.deck.splice(idx, 1);
+  else {
+    if (player.deck.length >= 10) { toast('Максимум 10'); return; }
+    player.deck.push(id);
+  }
+  savePlayer(); renderDeck();
+}
+
+const SHOP_OFFERS = [
+  { icon:'🪙', name:'500 золота',   desc:'Немного золота',        price:50,  currency:'gem',  give:{gold:500} },
+  { icon:'💰', name:'2000 золота',  desc:'Выгодный пакет',        price:150, currency:'gem',  give:{gold:2000} },
+  { icon:'⭐', name:'5 звёзд',      desc:'Премиум-валюта',        price:200, currency:'gem',  give:{stars:5} },
+  { icon:'🎲', name:'Случайная карта', desc:'Возможно новая карта', price:100, currency:'gold', give:{randomCard:true} },
+  { icon:'🌟', name:'Редкая карта', desc:'Гарант редкая',          price:400, currency:'gold', give:{randomRarity:'rare'} },
+  { icon:'💜', name:'Эпическая',    desc:'Гарант эпическая',       price:150, currency:'gem',  give:{randomRarity:'epic'} },
+  { icon:'👑', name:'Чемпион',      desc:'Гарант чемпион',         price:5,   currency:'star', give:{randomRarity:'champion'} },
+];
+function renderShop() {
+  const cont = document.getElementById('shopContent');
+  cont.innerHTML = '';
+  SHOP_OFFERS.forEach(offer => {
+    let canBuy = false;
+    if (offer.currency === 'gold') canBuy = player.gold >= offer.price;
+    else if (offer.currency === 'gem') canBuy = player.gems >= offer.price;
+    else canBuy = player.stars >= offer.price;
+    const icon = offer.currency === 'gold' ? '🪙' : offer.currency === 'gem' ? '💎' : '⭐';
+    const div = document.createElement('div');
+    div.className = 'shop-item';
+    div.innerHTML = `
+      <div class="item-icon">${offer.icon}</div>
+      <div class="item-info">
+        <div class="item-name">${offer.name}</div>
+        <div class="item-desc">${offer.desc}</div>
+      </div>
+      <button class="mc-btn green" ${canBuy?'':'disabled'} style="min-width:100px;">${icon} ${offer.price}</button>
+    `;
+    if (canBuy) div.querySelector('button').onclick = () => buyOffer(offer);
+    cont.appendChild(div);
+  });
+}
+function buyOffer(offer) {
+  if (offer.currency === 'gold') { if (player.gold < offer.price) return; player.gold -= offer.price; }
+  else if (offer.currency === 'gem') { if (player.gems < offer.price) return; player.gems -= offer.price; }
+  else { if (player.stars < offer.price) return; player.stars -= offer.price; }
+  const rewards = [];
+  if (offer.give.gold) { player.gold += offer.give.gold; rewards.push({icon:'🪙',name:'Золото',amount:'+'+offer.give.gold,rarity:'common'}); }
+  if (offer.give.stars) { player.stars += offer.give.stars; rewards.push({icon:'⭐',name:'Звёзды',amount:'+'+offer.give.stars,rarity:'legendary'}); }
+  if (offer.give.randomCard) {
+    const unowned = ALL_CARDS.filter(c => !player.cards[c.id]);
+    const pool = unowned.length ? unowned : ALL_CARDS;
+    const card = pool[Math.floor(Math.random()*pool.length)];
+    const wasNew = !player.cards[card.id];
+    unlockCard(card);
+    rewards.push({icon:card.icon,name:card.name,amount:wasNew?'НОВАЯ!':'+ур.',rarity:card.rarity});
+  }
+  if (offer.give.randomRarity) {
+    const pool = ALL_CARDS.filter(c => c.rarity === offer.give.randomRarity);
+    const card = pool[Math.floor(Math.random()*pool.length)];
+    const wasNew = !player.cards[card.id];
+    unlockCard(card);
+    rewards.push({icon:card.icon,name:card.name,amount:wasNew?'НОВАЯ!':'+ур.',rarity:card.rarity});
+  }
+  savePlayer(); refreshUI(); renderShop(); checkAchievements();
+  showModal(`
+    <h2>✅ Покупка</h2>
+    <div class="case-reveal">
+      ${rewards.map(r=>`<div class="reveal-card" style="border-color:${RARITY_INFO[r.rarity].color}">
+        <span class="rc-icon">${r.icon}</span><span class="rc-name">${r.name}</span>
+        <span class="rc-amount">${r.amount}</span></div>`).join('')}
+    </div>
+    <button class="mc-btn green" onclick="closeModal()" style="width:100%;">ОК</button>
+  `);
+}
+function unlockCard(card) {
+  if (player.cards[card.id]) player.cards[card.id] = Math.min(5, player.cards[card.id] + 1);
+  else player.cards[card.id] = 1;
+}
+function renderCases() {
+  const cont = document.getElementById('casesContent');
+  cont.innerHTML = '';
+  CASES.forEach(c => {
+    let canBuy = c.currency === 'gold' ? player.gold >= c.price : player.gems >= c.price;
+    const div = document.createElement('div');
+    div.className = 'case-box';
+    div.innerHTML = `
+      <span class="case-icon">${c.icon}</span>
+      <div class="case-name">${c.name}</div>
+      <div class="case-desc">${c.desc}</div>
+      <div class="case-price">${c.currency==='gold'?'🪙':'💎'} ${c.price}</div>
+      <button class="mc-btn purple" ${canBuy?'':'disabled'} style="width:100%;">Открыть</button>
+    `;
+    if (canBuy) div.querySelector('button').onclick = () => openCase(c);
+    cont.appendChild(div);
+  });
+}
+function pickRarity(weights) {
+  const total = Object.values(weights).reduce((a,b) => a+b, 0);
+  let r = Math.random() * total;
+  for (const [rarity, w] of Object.entries(weights)) {
+    r -= w; if (r <= 0) return rarity;
+  }
+  return 'common';
+}
+function openCase(c) {
+  if (c.currency === 'gold') { if (player.gold < c.price) return; player.gold -= c.price; }
+  else { if (player.gems < c.price) return; player.gems -= c.price; }
+  const rewards = [];
+  for (let i = 0; i < c.cards; i++) {
+    let rarity = pickRarity(c.weights);
+    if (c.id === 'legend' && i === 0) rarity = 'legendary';
+    if (c.id === 'champion' && i === 0) rarity = 'epic';
+    const pool = ALL_CARDS.filter(card => card.rarity === rarity);
+    if (!pool.length) continue;
+    const card = pool[Math.floor(Math.random()*pool.length)];
+    const wasNew = !player.cards[card.id];
+    unlockCard(card);
+    rewards.push({icon:card.icon,name:card.name,amount:wasNew?'НОВАЯ!':'+ур.',rarity:card.rarity});
+  }
+  savePlayer(); refreshUI(); renderCases(); checkAchievements();
+  playSound('caseOpen');
+  showModal(`
+    <h2>🎉 ${c.name} кейс</h2>
+    <div class="case-reveal">
+      ${rewards.map((r,i)=>`<div class="reveal-card" style="border-color:${RARITY_INFO[r.rarity].color};animation-delay:${i*0.1}s;">
+        <span class="rc-icon">${r.icon}</span>
+        <span class="rc-name" style="color:${RARITY_INFO[r.rarity].color}">${r.name}</span>
+        <span class="rc-amount">${r.amount}</span></div>`).join('')}
+    </div>
+    <button class="mc-btn green" onclick="closeModal()" style="width:100%;">Забрать</button>
+  `);
+}
+
+// ============================================================
+// ЗВУКИ
+// ============================================================
+let audioCtx = null;
+let musicOn = true;
+let musicTimer = null;
+
+function initAudio() {
+  if (audioCtx) return;
+  try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+}
+function playTone(freq, dur, type='sine', vol=0.1) {
+  if (!audioCtx || !musicOn) return;
+  try {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type; osc.frequency.value = freq;
+    gain.gain.value = vol;
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(); osc.stop(audioCtx.currentTime + dur);
+  } catch(e) {}
+}
+function playSound(name) {
+  if (!musicOn) return;
+  initAudio();
+  if (name === 'deploy') playTone(400, 0.1, 'square', 0.08);
+  else if (name === 'attack') playTone(600, 0.05, 'sawtooth', 0.05);
+  else if (name === 'caseOpen') { playTone(440, 0.1); setTimeout(()=>playTone(660, 0.15), 100); setTimeout(()=>playTone(880, 0.2), 200); }
+  else if (name === 'win') [523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone(f,0.2,'sine',0.15), i*100));
+  else if (name === 'lose') [400,300,200].forEach((f,i)=>setTimeout(()=>playTone(f,0.3,'sawtooth',0.1), i*150));
+  else if (name === 'click') playTone(300, 0.05, 'square', 0.05);
+}
+function startMusic() {
+  if (!musicOn) return;
+  initAudio();
+  if (!audioCtx) return;
+  const notes = [262, 294, 330, 349, 392, 440, 494, 523, 494, 440, 392, 349, 330, 294, 262, 0];
+  let i = 0;
+  const playNote = () => {
+    if (!musicOn || !audioCtx) return;
+    const f = notes[i % notes.length];
+    if (f > 0) {
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle'; osc.frequency.value = f;
+        gain.gain.value = 0.03;
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+      } catch(e) {}
+    }
+    i++;
+  };
+  playNote();
+  musicTimer = setInterval(playNote, 400);
+}
+function toggleMusic() {
+  musicOn = !musicOn;
+  document.getElementById('musicToggle').textContent = musicOn ? '🔊' : '🔇';
+  if (musicOn) { initAudio(); startMusic(); }
+  else { if (musicTimer) { clearInterval(musicTimer); musicTimer = null; } }
+}
+
+// ============================================================
+// PIXEL TEXTURES
+// ============================================================
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+ctx.imageSmoothingEnabled = false;
+
+let grassPattern, waterPattern, brickPattern;
+function makePixelTexture(color, size=32) {
+  const c = document.createElement('canvas');
+  c.width = size; c.height = size;
+  const cx = c.getContext('2d');
+  cx.fillStyle = color; cx.fillRect(0, 0, size, size);
+  const shades = ['rgba(0,0,0,0.3)', 'rgba(255,255,255,0.2)', 'rgba(0,0,0,0.15)', 'rgba(255,255,255,0.1)'];
+  const px = size / 8;
+  for (let i = 0; i < 40; i++) {
+    cx.fillStyle = shades[Math.floor(Math.random() * shades.length)];
+    cx.fillRect(Math.floor(Math.random()*8)*px, Math.floor(Math.random()*8)*px, px, px);
+  }
+  return c;
+}
+function initTextures() {
+  grassPattern = ctx.createPattern(makePixelTexture('#4a8a4a', 32), 'repeat');
+  waterPattern = ctx.createPattern(makePixelTexture('#2a6ab0', 32), 'repeat');
+  const brickC = document.createElement('canvas');
+  brickC.width = 32; brickC.height = 32;
+  const bctx = brickC.getContext('2d');
+  bctx.fillStyle = '#7a5a3a'; bctx.fillRect(0, 0, 32, 32);
+  bctx.fillStyle = '#5a3a1a';
+  for (let y = 0; y < 32; y += 8) {
+    for (let x = 0; x < 32; x += 16) {
+      const ox = (y/8)%2 ? 8 : 0;
+      bctx.fillRect(x + ox, y, 15, 7);
+    }
+  }
+  brickPattern = ctx.createPattern(brickC, 'repeat');
+}
+
+// ============================================================
+// BATTLE
+// ============================================================
+const TOWER_RADIUS = 30;
+const MAX_HP_KING = 3000;
+const MAX_HP_PRINCESS = 2000;
+const RIVER_TOP = H/2 - 32;
+const RIVER_BOT = H/2 + 32;
+
+function makeTowers() {
+  const kingHP = getTowerHP('king');
+  const prHP = getTowerHP('princess');
+  return {
+    player: {
+      king:     { x: W/2, y: H - 80, hp: kingHP, maxHp: kingHP, type:'king' },
+      princessL:{ x: W*0.22, y: H - 160, hp: prHP, maxHp: prHP, type:'princess' },
+      princessR:{ x: W*0.78, y: H - 160, hp: prHP, maxHp: prHP, type:'princess' },
+    },
+    enemy: {
+      king:     { x: W/2, y: 80, hp: kingHP, maxHp: kingHP, type:'king' },
+      princessL:{ x: W*0.22, y: 160, hp: prHP, maxHp: prHP, type:'princess' },
+      princessR:{ x: W*0.78, y: 160, hp: prHP, maxHp: prHP, type:'princess' },
+    }
+  };
+}
+let battle = null;
+let battleRAF = null;
+let lastFrameTime = 0;
+let _loopGuard = false;
+let animTime = 0;
+
+function withLevel(card, level) {
+  if (!card) return null;
+  const lvl = Number(level) || 1;
+  const mult = 1 + (lvl - 1) * 0.15;
+  return { ...card,
+    hp: Math.max(1, Math.round((card.hp||1) * mult)),
+    dmg: Math.round((card.dmg||0) * mult),
+    level: lvl };
+}
+function getBattleDeck() {
+  const ids = player.deck.length >= 10 ? player.deck : player.deck.concat(
+    ALL_CARDS.filter(c => !player.deck.includes(c.id)).slice(0, 10 - player.deck.length).map(c => c.id)
+  );
+  return ids.slice(0, 10).map(id => {
+    const base = ALL_CARDS.find(c => c.id === id);
+    return base ? withLevel(base, player.cards[id] || 1) : null;
+  }).filter(Boolean);
+}
+function startBattle(arenaId = 0) {
+  if (battleRAF) { cancelAnimationFrame(battleRAF); battleRAF = null; }
+  battle = null; _loopGuard = false;
+  initAudio();
+  const deck = getBattleDeck();
+  const arena = ARENAS[arenaId] || ARENAS[0];
+  battle = {
+    mode:'ai', arena,
+    elixir: 5, enemyElixir: 5,
+    towers: makeTowers(),
+    units: [], particles: [],
+    deck, deckHand: [], deckQueue: [],
+    selectedCard: null,
+    enemySpawnTimer: 2,
+    timeLeft: 180,
+    gameOver: false, winner: null,
+    rewardsApplied: false,
+  };
+  animTime = 0;
+  initDeckCycle(battle);
+  navTo('battle');
+  renderBattleCards();
+  updateBattleHUD();
+  showBattleMsg('Выбери карту');
+  document.getElementById('enemyName').textContent = ['Бот','Нуб','Про','Мастер','Легенда'][Math.floor(Math.random()*5)];
+  lastFrameTime = performance.now();
+  battleRAF = requestAnimationFrame(battleLoop);
+}
+function startCampaignBattle(mission) {
+  startBattle(mission.arenaId);
+  if (battle) {
+    battle.campaignMission = mission;
+    battle.aiLevel = mission.enemyLvl;
+  }
+  document.getElementById('enemyName').textContent = mission.boss ? '👹 БОСС' : 'AI ' + mission.name;
+}
+function initDeckCycle(b) {
+  b.deckQueue = [...b.deck].sort(() => Math.random() - 0.5);
+  b.deckHand = b.deckQueue.splice(0, 4);
+}
+function renderBattleCards() {
+  const bar = document.getElementById('cardBar');
+  bar.innerHTML = '';
+  if (!battle) return;
+  battle.deckHand.forEach(card => {
+    const div = document.createElement('div');
+    div.className = `cr-card rarity-${card.rarity}`;
+    div.innerHTML = `
+      <div class="cc-cost">${card.cost}</div>
+      <div class="cc-icon">${card.icon}</div>
+      <div class="cc-name">${card.name}</div>
+    `;
+    div.onclick = () => selectBattleCard(card);
+    bar.appendChild(div);
+  });
+  if (battle.deckQueue.length > 0) {
+    const next = battle.deckQueue[0];
+    const wrap = document.createElement('div');
+    wrap.id = 'nextCardWrap';
+    wrap.innerHTML = `<div>Далее</div><div class="next-card-mini">${next.icon}</div>`;
+    bar.appendChild(wrap);
+  }
+  refreshBattleCardStates();
+}
+function selectBattleCard(card) {
+  if (!battle || battle.gameOver) return;
+  if (battle.elixir < card.cost) { showBattleMsg('Мало эликсира!'); return; }
+  battle.selectedCard = battle.selectedCard?.id === card.id ? null : card;
+  playSound('click');
+  refreshBattleCardStates();
+  if (battle.selectedCard) showBattleMsg(`Выбрано: ${card.name}`);
+}
+function refreshBattleCardStates() {
+  if (!battle) return;
+  const cards = document.querySelectorAll('#cardBar .cr-card');
+  cards.forEach((el, i) => {
+    const c = battle.deckHand[i];
+    if (!c) return;
+    el.classList.toggle('selected', battle.selectedCard?.id === c.id);
+    el.classList.toggle('disabled', battle.elixir < c.cost);
+  });
+}
+function showBattleMsg(t) {
+  const el = document.getElementById('battleMsg');
+  if (!el) return;
+  el.textContent = t;
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), 1500);
+}
+function updateBattleHUD() {
+  if (!battle || !battle.towers) return;
+  try {
+    const bar = document.getElementById('elixirBarFill');
+    if (bar) bar.style.width = ((battle.elixir/10)*100) + '%';
+    const txt = document.getElementById('elixirBarText');
+    if (txt) txt.textContent = battle.elixir.toFixed(1);
+    const eEl = document.getElementById('enemyElixirHud');
+    if (eEl) eEl.textContent = battle.enemyElixir.toFixed(1);
+    const m = Math.floor(battle.timeLeft/60), s = Math.floor(battle.timeLeft%60);
+    const tEl = document.getElementById('timerDisplay');
+    if (tEl) { tEl.textContent = `${m}:${s.toString().padStart(2,'0')}`; tEl.classList.toggle('warn', battle.timeLeft<30); }
+    const dx = document.getElementById('doubleElixirBadge');
+    if (dx) dx.style.display = (battle.timeLeft<60 && battle.timeLeft>0) ? 'inline' : 'none';
+    const et = battle.towers.enemy;
+    if (et) {
+      updateTowerPip('tpE1', et.princessL);
+      updateTowerPip('tpEK', et.king);
+      updateTowerPip('tpE2', et.princessR);
+    }
+    refreshBattleCardStates();
+  } catch(e) {}
+}
+function updateTowerPip(id, tower) {
+  const el = document.getElementById(id);
+  if (!el || !tower) return;
+  el.classList.toggle('dead', tower.hp <= 0);
+  el.innerHTML = `${tower.type==='king'?'👑':'🏰'}<span style="color:#ff4a4a">${Math.max(0,Math.round(tower.hp))}</span>`;
+}
+
+canvas.addEventListener('click', (e) => {
+  if (!battle || battle.gameOver || !battle.selectedCard) return;
+  const r = canvas.getBoundingClientRect();
+  const x = (e.clientX - r.left) * (W / r.width);
+  const y = (e.clientY - r.top) * (H / r.height);
+  if (!battle.selectedCard.spell && y < H/2 - 20) { showBattleMsg('Только своя половина!'); return; }
+  if (battle.elixir < battle.selectedCard.cost) return;
+  const card = battle.selectedCard;
+  if (card.spell) castSpell(battle, card, x, y, 'player');
+  else spawnUnit(battle, card, x, y, 'player');
+  battle.elixir -= card.cost;
+  playSound('deploy');
+  const idx = battle.deckHand.indexOf(card);
+  if (idx >= 0) {
+    battle.deckHand.splice(idx, 1);
+    if (battle.deckQueue.length > 0) battle.deckHand.push(battle.deckQueue.shift());
+    battle.deckQueue.push(card);
+  }
+  battle.selectedCard = null;
+  renderBattleCards();
+  updateBattleHUD();
+});
+canvas.addEventListener('touchend', (e) => {
+  e.preventDefault();
+  const touch = e.changedTouches[0];
+  canvas.dispatchEvent(new MouseEvent('click', { clientX: touch.clientX, clientY: touch.clientY, bubbles: true }));
+});
+function castSpell(b, card, x, y, team) {
+  const radius = 80;
+  addParticles(b, x, y, card.color||'#ff4a4a', 20);
+  for (const u of b.units) {
+    if (u.team === team) continue;
+    if (Math.hypot(u.x-x, u.y-y) < radius) u.hp -= card.dmg;
+  }
+  const et = team === 'player' ? b.towers.enemy : b.towers.player;
+  for (const key of ['king','princessL','princessR']) {
+    const t = et[key];
+    if (!t || t.hp <= 0) continue;
+    if (Math.hypot(t.x-x, t.y-y) < radius) t.hp -= card.dmg;
+  }
+  playSound('attack');
+}
+function spawnUnit(b, card, x, y, team) {
+  if (!b || !card || card.spell) return;
+  if (!isFinite(x) || !isFinite(y)) { x = W/2; y = team==='player' ? H-200 : 200; }
+  const dup = b.units.find(u => u.team===team && u.def.id===card.id && Math.abs(u.x-x)<5 && Math.abs(u.y-y)<5);
+  if (dup) return;
+  const isBig = card.hp >= 2000 || card.cost >= 7;
+  const radius = isBig ? 18 : 12;
+  const hp = Math.max(1, Number(card.hp) || 100);
+  b.units.push({
+    def: card, x, y, team, hp, maxHP: hp,
+    atkTimer: 0, radius,
+    animPhase: Math.random() * Math.PI * 2,
+    attackFlash: 0,
+    isBuilding: card.speed === 0 && !card.spell,
+    isIdle: card.dmg === 0,
+    spawnTimer: 3,
+    facing: team === 'player' ? -1 : 1,
+    walkPhase: Math.random() * Math.PI * 2,
+  });
+  addParticles(b, x, y, team==='player' ? '#6fa8dc' : '#d05a5a', 6);
+}
+function addParticles(b, x, y, color, count) {
+  if (!b.particles) b.particles = [];
+  if (b.particles.length >= 180) return;
+  const n = Math.min(count, 200 - b.particles.length);
+  for (let i = 0; i < n; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const sp = 20 + Math.random() * 40;
+    b.particles.push({ x, y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, life: 0.5+Math.random()*0.3, maxLife: 0.8, color, size: 2+Math.random()*3 });
+  }
+}
+function findTarget(b, unit) {
+  let best = null, bestD = Infinity;
+  if (!isFinite(unit.x) || !isFinite(unit.y)) { unit.x = W/2; unit.y = unit.team==='player'?H-200:200; }
+  for (const u of b.units) {
+    if (u === unit || u.team === unit.team || u.hp <= 0) continue;
+    if (!isFinite(u.x) || !isFinite(u.y)) continue;
+    if (u.def.dmg === 0) continue;
+    const d = Math.hypot(u.x-unit.x, u.y-unit.y);
+    if (d < bestD) { bestD = d; best = u; }
+  }
+  const et = unit.team === 'player' ? b.towers.enemy : b.towers.player;
+  for (const key of ['princessL','princessR','king']) {
+    const t = et[key];
+    if (!t || t.hp <= 0) continue;
+    const d = Math.hypot(t.x-unit.x, t.y-unit.y);
+    if (d < bestD) { bestD = d; best = { x: t.x, y: t.y, isTower: true, towerRef: t }; }
+  }
+  return { target: best, dist: bestD };
+}
+function updateUnit(b, unit, dt) {
+  if (!unit || unit.hp <= 0) return;
+  if (!isFinite(unit.x) || !isFinite(unit.y)) { unit.x = W/2; unit.y = unit.team==='player'?H-200:200; return; }
+  unit.animPhase += dt*4;
+  unit.walkPhase += dt*8;
+  if (unit.attackFlash > 0) unit.attackFlash -= dt;
+  const { target, dist } = findTarget(b, unit);
+  if (unit.isBuilding && unit.def.dmg === 0) {
+    unit.spawnTimer = (unit.spawnTimer || 3) - dt;
+    if (unit.spawnTimer <= 0) {
+      unit.spawnTimer = 4;
+      const sc = withLevel({ id:'spawn_goblin', name:'Гоблин', icon:'👺', cost:0, rarity:'common', hp:150, dmg:60, range:30, speed:0.85, atkCd:0.8, color:'#7ad14f' }, 1);
+      spawnUnit(b, sc, unit.x + (Math.random()-0.5)*20, unit.y + (unit.team==='player'?-20:20), unit.team);
+    }
+    return;
+  }
+  if (unit.isBuilding) {
+    if (target && dist <= (unit.def.range||30)) {
+      unit.atkTimer -= dt;
+      if (unit.atkTimer <= 0) {
+        unit.atkTimer = unit.def.atkCd||1; unit.attackFlash = 0.2;
+        if (target.isTower) target.towerRef.hp -= unit.def.dmg;
+        else target.hp -= unit.def.dmg;
+        addParticles(b, target.x, target.y, '#ffcc00', 3);
+      }
+    }
+    return;
+  }
+  if (unit.isIdle) return;
+  if (!target) {
+    const et = unit.team === 'player' ? b.towers.enemy : b.towers.player;
+    const fb = et.king.hp>0 ? et.king : et.princessL.hp>0 ? et.princessL : et.princessR.hp>0 ? et.princessR : null;
+    if (fb) {
+      const dx = fb.x-unit.x, dy = fb.y-unit.y, len = Math.hypot(dx,dy);
+      if (len > 1) { const spd = (unit.def.speed||1)*dt*60; unit.x += dx/len*spd; unit.y += dy/len*spd; }
+    }
+    return;
+  }
+  const alive = target.isTower ? target.towerRef.hp>0 : target.hp>0;
+  if (!alive) return;
+  const range = unit.def.range || 30;
+  if (dist <= range) {
+    unit.atkTimer -= dt;
+    if (unit.atkTimer <= 0) {
+      unit.atkTimer = unit.def.atkCd||1; unit.attackFlash = 0.2;
+      if (target.isTower) target.towerRef.hp -= unit.def.dmg;
+      else target.hp -= unit.def.dmg;
+      addParticles(b, target.x, target.y, '#ff6a4a', 3);
+    }
+    return;
+  }
+  const spd = (unit.def.speed||1)*dt*60;
+  if (spd <= 0) return;
+  const dx = target.x-unit.x, dy = target.y-unit.y, len = Math.hypot(dx,dy);
+  if (len < 0.1) { unit.x += (Math.random()-0.5)*2; unit.y += (Math.random()-0.5)*2; return; }
+  unit.x += dx/len*spd;
+  unit.y += dy/len*spd;
+  if (Math.abs(dx) > Math.abs(dy)) unit.facing = dx > 0 ? 1 : -1;
+}
+function updateEnemyAI(b, dt) {
+  if (!b) return;
+  b.enemySpawnTimer -= dt;
+  if (b.enemySpawnTimer > 0) return;
+  const ec = b.units.filter(u => u.team === 'enemy').length;
+  if (ec >= 8) { b.enemySpawnTimer = 2; return; }
+  const minElixir = 3 + Math.random() * 4;
+  if (b.enemyElixir < minElixir) { b.enemySpawnTimer = 1; return; }
+  const affordable = ALL_CARDS.filter(c => c.cost <= b.enemyElixir - 1 && !c.spell && (c.speed > 0 || c.dmg > 0));
+  if (!affordable.length) { b.enemySpawnTimer = 2; return; }
+  const defensive = b.units.filter(u => u.team === 'player' &&
+    (Math.hypot(u.x - b.towers.enemy.princessL.x, u.y - b.towers.enemy.princessL.y) < 180 ||
+     Math.hypot(u.x - b.towers.enemy.princessR.x, u.y - b.towers.enemy.princessR.y) < 180)).length;
+  let card;
+  if (defensive > 0) {
+    const d = affordable.filter(c => c.dmg > 0 && (c.hp > 500 || c.ranged));
+    card = d.length ? d[Math.floor(Math.random()*d.length)] : affordable[Math.floor(Math.random()*affordable.length)];
+  } else {
+    card = affordable[Math.floor(Math.random()*affordable.length)];
+  }
+  const aiLvl = b.aiLevel || 1;
+  const leveled = withLevel(card, aiLvl + Math.floor(Math.random()*2));
+  if (!leveled) return;
+  const x = W * 0.3 + Math.random() * W * 0.4;
+  const y = 100 + Math.random() * 120;
+  if (card.spell) castSpell(b, leveled, x, H - 250, 'enemy');
+  else spawnUnit(b, leveled, x, y, 'enemy');
+  b.enemyElixir -= card.cost;
+  b.enemySpawnTimer = 2.5 + Math.random() * 3;
+}
+function updateParticles(b, dt) {
+  if (b.particles.length > 200) b.particles = b.particles.slice(-200);
+  for (const p of b.particles) {
+    p.x += p.vx*dt; p.y += p.vy*dt; p.vy += 80*dt; p.life -= dt;
+  }
+  b.particles = b.particles.filter(p => p.life > 0);
+}
+function battleLoop(now) {
+  if (_loopGuard) return; _loopGuard = true;
+  try {
+    const dt = Math.min(0.05, Math.max(0, (now-lastFrameTime)/1000));
+    lastFrameTime = now;
+    if (!battle) { _loopGuard = false; return; }
+    if (!battle.gameOver) {
+      const de = battle.timeLeft < 60 && battle.timeLeft > 0;
+      const rate = de ? 0.7 : 1.4;
+      battle.elixir = Math.min(10, battle.elixir + dt/rate);
+      battle.enemyElixir = Math.min(10, battle.enemyElixir + dt/rate);
+      battle.timeLeft = Math.max(0, battle.timeLeft - dt);
+      if (battle.mode === 'ai') { try { updateEnemyAI(battle, dt); } catch(e){} }
+      for (const u of battle.units) { try { updateUnit(battle, u, dt); } catch(e){} }
+      const before = battle.units.length;
+      battle.units = battle.units.filter(u => u.hp > 0);
+      if (battle.mode === 'ai') player.kills += (before - battle.units.length);
+      for (const u of battle.units) { u.x = Math.max(20,Math.min(W-20,u.x)); u.y = Math.max(20,Math.min(H-20,u.y)); }
+      updateParticles(battle, dt);
+      checkBattleEnd(battle);
+      updateBattleHUD();
+    }
+    drawBattle(battle);
+  } catch(e) {}
+  _loopGuard = false;
+  if (battle) battleRAF = requestAnimationFrame(battleLoop);
+}
+function checkBattleEnd(b) {
+  if (!b || b.gameOver) return;
+  if (b.towers.player.king.hp <= 0) { b.gameOver = true; b.winner = 'enemy'; }
+  if (b.towers.enemy.king.hp <= 0) { b.gameOver = true; b.winner = 'player'; }
+  if (b.timeLeft <= 0 && !b.gameOver) {
+    b.gameOver = true;
+    const myT = (b.towers.player.king.hp>0?1:0)+(b.towers.player.princessL.hp>0?1:0)+(b.towers.player.princessR.hp>0?1:0);
+    const enT = (b.towers.enemy.king.hp>0?1:0)+(b.towers.enemy.princessL.hp>0?1:0)+(b.towers.enemy.princessR.hp>0?1:0);
+    b.winner = myT > enT ? 'player' : enT > myT ? 'enemy' : 'draw';
+  }
+  if (b.gameOver && !b.rewardsApplied) {
+    b.rewardsApplied = true;
+    applyBattleReward(b);
+  }
+}
+function applyBattleReward(b) {
+  let gold=0, trophy=0, star=0;
+  if (b.winner === 'player') { gold=100; trophy=30; star = Math.random()<0.15?1:0; }
+  else if (b.winner === 'draw') { gold=40; trophy=5; }
+  else { gold=20; trophy=-20; }
+  player.gold += gold;
+  player.trophies = Math.max(0, player.trophies + trophy);
+  player.stars += star;
+  if (b.winner === 'player') { player.wins++; player.streak++; player.bestStreak = Math.max(player.bestStreak, player.streak); playSound('win'); }
+  else if (b.winner === 'enemy') { player.losses++; player.streak = 0; playSound('lose'); }
+  if (b.campaignMission && b.winner === 'player') {
+    player.campaignCompleted = player.campaignCompleted || [];
+    if (!player.campaignCompleted.includes(b.campaignMission.id)) {
+      player.campaignCompleted.push(b.campaignMission.id);
+      player.gold += b.campaignMission.reward;
+      toast(`📖 Миссия пройдена! +${b.campaignMission.reward} 🪙`);
+    }
+  }
+  savePlayer(); refreshUI(); checkAchievements();
+  const cur = b;
+  setTimeout(() => {
+    if (battle !== cur || !battle) return;
+    showModal(`
+      <h2>${b.winner==='player'?'🏆 ПОБЕДА!':b.winner==='enemy'?'💀 ПОРАЖЕНИЕ':'🤝 НИЧЬЯ'}</h2>
+      <div class="case-reveal">
+        <div class="reveal-card"><span class="rc-icon">🪙</span><span class="rc-name">Золото</span><span class="rc-amount">+${gold}</span></div>
+        <div class="reveal-card"><span class="rc-icon">🏆</span><span class="rc-name">Кубки</span><span class="rc-amount">${trophy>=0?'+':''}${trophy}</span></div>
+        ${star?'<div class="reveal-card"><span class="rc-icon">⭐</span><span class="rc-name">Звезда</span><span class="rc-amount">+1</span></div>':''}
+      </div>
+      <button class="mc-btn green" onclick="closeModal(); navTo('menu');" style="width:100%;">В меню</button>
+    `);
+  }, 500);
+}
+function leaveBattle() {
+  if (battle && !battle.gameOver && !confirm('Сдаться?')) return;
+  if (battleRAF) { cancelAnimationFrame(battleRAF); battleRAF = null; }
+  battle = null; _loopGuard = false;
+  closeModal();
+  navTo('menu');
+}
+function quickMatch() {
+  const arena = getCurrentArena();
+  startBattle(arena.id);
+}
+
+// ============================================================
+// PIXEL RENDERING — всё рисуется пиксельными квадратами
+// ============================================================
+function drawBattle(b) {
+  if (!b || !b.towers) return;
+  animTime = (animTime + 0.016) % 10000;
+  const arena = b.arena || ARENAS[0];
+  if (grassPattern) {
+    ctx.save();
+    ctx.fillStyle = grassPattern;
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = arena.bg;
+    ctx.globalAlpha = 0.4;
+    ctx.fillRect(0, 0, W, H);
+    ctx.restore();
+  } else { ctx.fillStyle = arena.bg; ctx.fillRect(0, 0, W, H); }
+  ctx.fillStyle = 'rgba(200,50,50,0.08)';
+  ctx.fillRect(0, 0, W, RIVER_TOP);
+  ctx.fillStyle = 'rgba(50,100,200,0.08)';
+  ctx.fillRect(0, RIVER_BOT, W, H - RIVER_BOT);
+  ctx.save();
+  ctx.beginPath(); ctx.rect(0, RIVER_TOP, W, RIVER_BOT - RIVER_TOP); ctx.clip();
+  ctx.fillStyle = arena.river;
+  ctx.fillRect(0, RIVER_TOP, W, RIVER_BOT - RIVER_TOP);
+  if (waterPattern) {
+    ctx.globalAlpha = 0.7; ctx.fillStyle = waterPattern;
+    const ox = Math.floor((animTime * 20) / 4) * 4;
+    ctx.translate(-(ox % 32), 0);
+    ctx.fillRect(0, RIVER_TOP, W + 32, RIVER_BOT - RIVER_TOP);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+  }
+  ctx.restore();
+  const bw = 76;
+  drawPixelBridge(W*0.22 - bw/2, bw);
+  drawPixelBridge(W*0.78 - bw/2, bw);
+  drawTowerShadow(b.towers.enemy.king);
+  drawTowerShadow(b.towers.enemy.princessL);
+  drawTowerShadow(b.towers.enemy.princessR);
+  drawTowerShadow(b.towers.player.king);
+  drawTowerShadow(b.towers.player.princessL);
+  drawTowerShadow(b.towers.player.princessR);
+  drawTower(b.towers.enemy.king, 'enemy', true);
+  drawTower(b.towers.enemy.princessL, 'enemy', false);
+  drawTower(b.towers.enemy.princessR, 'enemy', false);
+  drawTower(b.towers.player.king, 'player', true);
+  drawTower(b.towers.player.princessL, 'player', false);
+  drawTower(b.towers.player.princessR, 'player', false);
+  for (const u of b.units) { try { drawUnit(b, u); } catch(e){} }
+  for (const p of b.particles) {
+    ctx.globalAlpha = p.life / p.maxLife;
+    ctx.fillStyle = p.color;
+    ctx.fillRect(Math.floor(p.x), Math.floor(p.y), p.size, p.size);
+  }
+  ctx.globalAlpha = 1;
+  if (b.selectedCard && !b.selectedCard.spell) {
+    ctx.fillStyle = 'rgba(255,204,0,0.08)';
+    ctx.fillRect(0, H/2 + 10, W, H - (H/2 + 10));
+  }
+  if (b.gameOver) {
+    ctx.fillStyle = 'rgba(0,0,0,0.8)';
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = b.winner === 'player' ? '#4ade80' : b.winner === 'enemy' ? '#ef4444' : '#ffcc00';
+    ctx.font = 'bold 48px Courier New';
+    ctx.textAlign = 'center';
+    const txt = b.winner==='player'?'ПОБЕДА!':b.winner==='enemy'?'ПОРАЖЕНИЕ':'НИЧЬЯ';
+    ctx.fillText(txt, W/2, H/2);
+    ctx.textAlign = 'left';
+  }
+}
+function drawPixelBridge(x, w) {
+  const y = RIVER_TOP, h = RIVER_BOT - RIVER_TOP;
+  if (brickPattern) { ctx.fillStyle = brickPattern; ctx.fillRect(x, y, w, h); }
+  else { ctx.fillStyle = '#7a5a3a'; ctx.fillRect(x, y, w, h); }
+  ctx.fillStyle = '#3a1a0a';
+  ctx.fillRect(x - 3, y, 4, h);
+  ctx.fillRect(x + w - 1, y, 4, h);
+}
+function drawTowerShadow(t) {
+  if (!t || t.hp <= 0) return;
+  const r = t.type === 'king' ? TOWER_RADIUS + 6 : TOWER_RADIUS;
+  ctx.fillStyle = 'rgba(0,0,0,0.35)';
+  ctx.fillRect(t.x - r + 4, t.y + 4, r*2, r*0.8);
+}
+function drawTower(t, team, isKing) {
+  if (!t) return;
+  if (t.hp <= 0) {
+    ctx.fillStyle = 'rgba(50,50,60,0.7)';
+    const r = TOWER_RADIUS * 0.8;
+    ctx.fillRect(t.x - r, t.y - r, r*2, r*2);
+    return;
+  }
+  const r = isKing ? TOWER_RADIUS + 6 : TOWER_RADIUS;
+  const baseColor = team === 'player' ? '#3a7acc' : '#cc3a3a';
+  const darkColor = team === 'player' ? '#1a4a8c' : '#8c1a1a';
+  const lightColor = team === 'player' ? '#5a9ae0' : '#e05a5a';
+  
+  // Pixel tower — stacked blocks
+  const blockSize = 6;
+  const gridSize = Math.ceil((r * 2) / blockSize);
+  for (let by = 0; by < gridSize; by++) {
+    for (let bx = 0; bx < gridSize; bx++) {
+      const px = t.x - r + bx * blockSize;
+      const py = t.y - r + by * blockSize;
+      const distFromCenter = Math.hypot(bx - gridSize/2, by - gridSize/2);
+      if (distFromCenter > gridSize/2) continue;
+      let color = baseColor;
+      if (bx === 0 || by === 0 || bx === gridSize-1 || by === gridSize-1) color = darkColor;
+      else if (bx === 1 || by === 1) color = lightColor;
+      ctx.fillStyle = color;
+      ctx.fillRect(px, py, blockSize, blockSize);
+    }
+  }
+  // Battlements
+  ctx.fillStyle = darkColor;
+  for (let i = 0; i < 6; i++) {
+    const a = (i/6) * Math.PI * 2;
+    const bx = t.x + Math.cos(a) * r;
+    const by = t.y + Math.sin(a) * r;
+    ctx.fillRect(Math.floor(bx/4)*4 - 4, Math.floor(by/4)*4 - 4, 8, 8);
+  }
+  // HP bar
+  const barW = isKing ? 70 : 56;
+  const ratio = Math.max(0, t.hp/t.maxHp);
+  ctx.fillStyle = '#000';
+  ctx.fillRect(t.x - barW/2, t.y - r - 14, barW, 8);
+  ctx.fillStyle = team==='player' ? '#4ade80' : '#ef4444';
+  ctx.fillRect(t.x - barW/2, t.y - r - 14, barW*ratio, 8);
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(t.x - barW/2, t.y - r - 14, barW, 8);
+  // Icon
+  ctx.font = `${isKing?24:18}px Arial`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(isKing ? '👑' : '🏰', t.x, t.y);
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+}
+function drawUnit(b, u) {
+  const isPlayer = u.team === 'player';
+  const bob = Math.sin(u.animPhase) * 1.5;
+  const walkBob = Math.sin(u.walkPhase) * 1;
+  
+  // Shadow
+  ctx.fillStyle = 'rgba(0,0,0,0.35)';
+  ctx.fillRect(u.x - u.radius + 2, u.y + u.radius*0.4, u.radius*2, u.radius*0.6);
+  
+  // Attack flash
+  if (u.attackFlash > 0) {
+    ctx.fillStyle = `rgba(255,255,100,${u.attackFlash*3})`;
+    ctx.fillRect(u.x - u.radius - 4, u.y + bob - u.radius - 4, u.radius*2 + 8, u.radius*2 + 8);
+  }
+  
+  // PIXEL UNIT — grid of blocks
+  const color = isPlayer ? (u.def.color || '#6fa8dc') : '#d05a5a';
+  const darkColor = isPlayer ? shadeColor(u.def.color || '#6fa8dc', -40) : '#8a3a3a';
+  const lightColor = isPlayer ? shadeColor(u.def.color || '#6fa8dc', 40) : '#f07a7a';
+  const blockSize = 3;
+  const gridSize = Math.ceil((u.radius * 2) / blockSize);
+  const ox = u.x - u.radius;
+  const oy = u.y + bob + walkBob - u.radius;
+  
+  for (let by = 0; by < gridSize; by++) {
+    for (let bx = 0; bx < gridSize; bx++) {
+      const distFromCenter = Math.hypot(bx - gridSize/2, by - gridSize/2);
+      if (distFromCenter > gridSize/2) continue;
+      let c = color;
+      if (bx === 0 || by === 0 || bx === gridSize-1 || by === gridSize-1) c = darkColor;
+      else if (bx === 1 || by === 1) c = lightColor;
+      ctx.fillStyle = c;
+      ctx.fillRect(Math.floor(ox + bx * blockSize), Math.floor(oy + by * blockSize), blockSize, blockSize);
+    }
+  }
+  
+  // Eye pixels
+  ctx.fillStyle = '#000';
+  const eyeY = Math.floor(oy + gridSize * blockSize * 0.35);
+  const eyeSize = Math.max(2, Math.floor(blockSize * 0.8));
+  if (u.facing >= 0) {
+    ctx.fillRect(Math.floor(ox + gridSize * blockSize * 0.55), eyeY, eyeSize, eyeSize);
+    ctx.fillRect(Math.floor(ox + gridSize * blockSize * 0.75), eyeY, eyeSize, eyeSize);
+  } else {
+    ctx.fillRect(Math.floor(ox + gridSize * blockSize * 0.15), eyeY, eyeSize, eyeSize);
+    ctx.fillRect(Math.floor(ox + gridSize * blockSize * 0.35), eyeY, eyeSize, eyeSize);
+  }
+  
+  // Icon above
+  ctx.font = `${Math.max(10, u.radius)}px Arial`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(u.def.icon, u.x, u.y + bob - u.radius - 6);
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  
+  // HP bar
+  const w = u.radius * 2;
+  const ratio = Math.max(0, u.hp / u.maxHP);
+  ctx.fillStyle = '#000';
+  ctx.fillRect(u.x - w/2, u.y - u.radius - 14 + bob, w, 5);
+  ctx.fillStyle = isPlayer ? '#4ade80' : '#ef4444';
+  ctx.fillRect(u.x - w/2, u.y - u.radius - 14 + bob, w * ratio, 5);
+}
+function shadeColor(hex, amt) {
+  const c = hex.replace('#','');
+  const r = Math.max(0, Math.min(255, parseInt(c.substr(0,2),16) + amt));
+  const g = Math.max(0, Math.min(255, parseInt(c.substr(2,2),16) + amt));
+  const b = Math.max(0, Math.min(255, parseInt(c.substr(4,2),16) + amt));
+  return `rgb(${r},${g},${b})`;
+}
+
+// ============================================================
+// INIT
+// ============================================================
+loadPlayer();
+refreshUI();
+initTextures();
+
+window.navTo = navTo;
+window.switchTab = switchTab;
+window.resetProgress = resetProgress;
+window.closeModal = closeModal;
+window.leaveBattle = leaveBattle;
+window.quickMatch = quickMatch;
+window.startTutorial = startTutorial;
+window.nextTutorial = nextTutorial;
+window.toggleMusic = toggleMusic;
+window.filterCollection = filterCollection;
+window.searchCollection = searchCollection;
+window.showNameChange = showNameChange;
+window.changeName = changeName;
+window.renderTowers = renderTowers;
+window.upgradeTower = upgradeTower;
+window.renderCampaign = renderCampaign;
+window.startCampaignBattle = startCampaignBattle;
+window.renderAchievements = renderAchievements;
+
+document.addEventListener('click', () => {
+  initAudio();
+  if (musicOn && !musicTimer) startMusic();
+}, { once: true });
+
+if (!player.tutorialDone) {
+  setTimeout(() => startTutorial(), 500);
+}
+</script>
+</body>
+</html>
